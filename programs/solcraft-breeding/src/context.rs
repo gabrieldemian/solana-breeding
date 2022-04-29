@@ -1,3 +1,5 @@
+use anchor_spl::token::{Mint};
+
 use crate::state::*;
 
 use {
@@ -68,6 +70,16 @@ pub struct UpdateCandyMachine<'info> {
         has_one = authority,
     )]
     pub candy_machine: Account<'info, CandyMachine>,
+    pub authority: Signer<'info>,
+}
+
+#[derive(Accounts)]
+pub struct Breed<'info> {
+    #[account(
+        mut,
+        // constraint = male.to_account_info().owner == authority.to_account_info().key
+    )]
+    pub male: Account<'info, Mint>,
     pub authority: Signer<'info>,
 }
 

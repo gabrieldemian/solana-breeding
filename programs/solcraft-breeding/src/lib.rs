@@ -8,10 +8,10 @@ pub mod error;
 pub mod state;
 pub mod utils;
 
-declare_id!("BhuuED6jc394a3TpPiqzzy996RPWkVgVMtonNFHe5H3t");
+declare_id!("F4FfKsLLJjNR8WB6wpGufabkZFG6McptNuewPFSfKQM1");
 
 #[program]
-pub mod minimal_mint {
+pub mod solcraft_breeding {
 
     use super::*;
     use metaplex_token_metadata::{instruction::{create_metadata_accounts, update_metadata_accounts}, state::Creator};
@@ -101,8 +101,8 @@ pub mod minimal_mint {
                 nft_uri,
                 Some(creators),
                 candy_machine.data.seller_fee_basis_points, // royalties percentage in basis point 500 = 5%
-                true,                                       // update auth is signer?
-                false,                                      // is mutable?
+                true,             // update auth is signer?
+                false,                         // is mutable?
             ),
             metadata_infos.as_slice(),
             &[&authority_seeds],
@@ -144,6 +144,16 @@ pub mod minimal_mint {
             ],
             &[&authority_seeds],
         )?;
+
+        Ok(())
+    }
+
+    pub fn breed(ctx: Context<Breed>) -> Result<()> {
+
+        let male = &mut ctx.accounts.male;
+        // male.deserialize_data::<Mint>();
+
+        msg!("account infos is: {:#?}", male.to_account_info());
 
         Ok(())
     }

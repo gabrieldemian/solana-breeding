@@ -17,7 +17,7 @@ import {
   SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID,
   TOKEN_METADATA_PROGRAM_ID
 } from './constants'
-import { MinimalMint } from './target/types/minimal_mint'
+import { SolcraftBreeding } from './target/types/solcraft_breeding'
 
 export const createAssociatedTokenAccountInstruction = (
   associatedTokenAddress: PublicKey,
@@ -85,4 +85,5 @@ export const provider = AnchorProvider.env()
 setProvider(provider)
 
 export const DEVNET_WALLET = provider.wallet
-export const program = workspace.MinimalMint as Program<MinimalMint>
+export const program =
+  workspace.SolcraftBreeding as Program<SolcraftBreeding>

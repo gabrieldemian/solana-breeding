@@ -44,7 +44,10 @@ const mintNFT = async () => {
   }
 
   await program.methods
-    .mintNft('Shrek #1', 'https://api.amoebits.io/get/amoebits_1')
+    .mintNft(
+      'Pig #1',
+      'https://spdda7jyig6ja6wwkgt7oz2gf4q4qgy2kqqeqmgmoxyraurv.arweave.net/k8YwfThBvJB61--lGn92dGLyHIGxpUIEgwzHXxEFI1c'
+    )
     .accounts(accounts)
     .signers([mint])
     .preInstructions([

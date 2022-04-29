@@ -11,13 +11,13 @@ export const TOKEN_METADATA_PROGRAM_ID = new PublicKey(
 
 /* seed of the PDA, can be anything you want */
 /* remember to change them on the contract too (state.rs file) */
-export const PREFIX = 'dog'
+export const PREFIX = 'solcraft_breeding'
 
 /* replace the following with your own pubkeys */
 export const candyMachine = new PublicKey(
-  'EhKC7eUWhouKqwDK88wD3HHZ76C9YkqgZkB1KpUkBKNc'
+  'AhvRPxJN42sQ8f7ZpWhMBERen7kZdp8Q7V9W1krE8Lvv'
 )
 
 export const programId = new PublicKey(
-  '4DJz2TvohxXxovGgwjWZcfXoZaoHJR4cHvGTF15Bot42'
+  'F4FfKsLLJjNR8WB6wpGufabkZFG6McptNuewPFSfKQM1'
 )

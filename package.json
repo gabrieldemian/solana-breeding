@@ -12,7 +12,8 @@
     "build-types": "tsc --noEmit --pretty",
     "test-mint": "anchor run test_mint",
     "test-candy": "anchor run test_init_candy_machine",
-    "test-update_candy": "anchor run test_update_candy_machine"
+    "test-update_candy": "anchor run test_update_candy_machine",
+    "test-breed": "anchor run test_breed"
   },
   "devDependencies": {
     "@types/chai": "^4.2.22",

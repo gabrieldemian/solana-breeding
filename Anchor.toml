@@ -1,0 +1,17 @@
+[programs.localnet]
+minimal_mint = "BhuuED6jc394a3TpPiqzzy996RPWkVgVMtonNFHe5H3t"
+
+[programs.devnet]
+minimal_mint = "BhuuED6jc394a3TpPiqzzy996RPWkVgVMtonNFHe5H3t"
+
+[registry]
+url = "https://anchor.projectserum.com"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/devnet.json"
+
+[scripts]
+test_mint = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/mintNFT.ts"
+test_init_candy_machine = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/initializeCandyMachine.ts"
+test_update_candy_machine = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/updateCandyMachine.ts"

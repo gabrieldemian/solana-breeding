@@ -1,4 +1,5 @@
-use anchor_spl::token::{Mint};
+
+use anchor_spl::token::Mint;
 
 use crate::state::*;
 
@@ -75,12 +76,19 @@ pub struct UpdateCandyMachine<'info> {
 
 #[derive(Accounts)]
 pub struct Breed<'info> {
-    #[account(
-        mut,
-        // constraint = male.to_account_info().owner == authority.to_account_info().key
-    )]
-    pub male: Account<'info, Mint>,
+    // #[account(
+    //     mut,
+    //     // constraint = male.to_account_info().owner == authority.to_account_info().key
+    // )]
+    // pub male: Account<'info, Mint>,
     pub authority: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+
+    #[account(mut)]
+    pub mint: Account<'info, Mint>,
+    
+    #[account(mut)]
+    pub token: AccountInfo<'info>,
 }
 
 /* RENT TABLE */

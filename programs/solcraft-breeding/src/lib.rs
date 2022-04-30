@@ -14,7 +14,7 @@ declare_id!("F4FfKsLLJjNR8WB6wpGufabkZFG6McptNuewPFSfKQM1");
 pub mod solcraft_breeding {
 
     use super::*;
-    use metaplex_token_metadata::{instruction::{create_metadata_accounts, update_metadata_accounts}, state::Creator};
+    use metaplex_token_metadata::{instruction::{create_metadata_accounts, update_metadata_accounts}, state::{Creator}};
     use anchor_lang::solana_program::{program::{invoke_signed, invoke}, system_instruction};
 
     pub fn mint_nft(ctx: Context<MintNFT>, nft_name: String, nft_uri: String) -> Result<()> {
@@ -141,6 +141,7 @@ pub mod solcraft_breeding {
                 ctx.accounts.token_metadata_program.clone(),
                 ctx.accounts.metadata.clone(),
                 candy_machine.to_account_info().clone(),
+                ctx.accounts.system_program.to_account_info().clone(),
             ],
             &[&authority_seeds],
         )?;
@@ -150,10 +151,39 @@ pub mod solcraft_breeding {
 
     pub fn breed(ctx: Context<Breed>) -> Result<()> {
 
-        let male = &mut ctx.accounts.male;
-        // male.deserialize_data::<Mint>();
+        invoke(
+            &spl_token::instruction::burn(
+                &ctx.accounts.token_program.key,
+                &ctx.accounts.token.key,
+                &ctx.accounts.mint.key(),
+                &ctx.accounts.authority.key,
+                &[&ctx.accounts.authority.key],
+                1,
+            )?,
+            &[
+                ctx.accounts.token_program.to_account_info().clone(),
+                ctx.accounts.token.to_account_info().clone(),
+                ctx.accounts.mint.to_account_info().clone(),
+                ctx.accounts.authority.to_account_info().clone(),
+            ],
+        )?;
 
-        msg!("account infos is: {:#?}", male.to_account_info());
+        // let male = &mut ctx.accounts.male.to_account_info();
+        // let data = &male.data.borrow_mut()[..];
+
+        // let meta = Metadata::try_from_slice(
+        //     data
+        // )?;
+
+        // let meta = Metadata::from_account_info(
+        //     &ctx.accounts.male.to_account_info()
+        // )?;
+
+        // msg!("meta is mutable: {}", meta.is_mutable);
+
+        // let meta = Metadata::from_account_info(male)?;
+
+        // msg!("meta uri: {}", meta.uri);
 
         Ok(())
     }

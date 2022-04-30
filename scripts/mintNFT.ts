@@ -84,6 +84,8 @@ const mintNFT = async () => {
       )
     ])
     .rpc()
+
+  console.log('your NFT mint addr is: ', mint.publicKey.toBase58())
 }
 
 export default mintNFT

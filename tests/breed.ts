@@ -6,6 +6,7 @@ import {
   getTokenWallet,
   program
 } from '../utils'
+import { candyMachine } from '../constants'
 
 describe('will breed 2 pigs', () => {
   it('can breed', async () => {
@@ -29,7 +30,8 @@ describe('will breed 2 pigs', () => {
       mint,
       token,
       tokenProgram: TOKEN_PROGRAM_ID,
-      metadata
+      metadata,
+      candyMachine
     }
 
     // const largestAccounts =

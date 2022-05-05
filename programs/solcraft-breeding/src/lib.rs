@@ -152,11 +152,20 @@ pub mod solcraft_breeding {
 
     pub fn breed(ctx: Context<Breed>) -> Result<()> {
 
+        /* TODO: checar que o metadata.update_authority é o meu PDA */
+        let metadata_account = &ctx.accounts.metadata.to_account_info();
+        let candy_machine = &ctx.accounts.candy_machine.to_account_info();
+        let metadata = Metadata::from_account_info(metadata_account)?;
+        
+        require!(
+            metadata.update_authority.key() == candy_machine.key(),
+            ErrorCode::CandyMachineWrongAddress
+        );
+        
         // let mint = &ctx.accounts.mint.to_account_info();
         let token = &ctx.accounts.token.to_account_info();
-        let metadata = &ctx.accounts.metadata.to_account_info();
-        let metadata = Metadata::from_account_info(metadata)?;
 
+        msg!("metadata owner -> {}", metadata_account.owner);
         msg!("owner of NFT -> {}", token.owner);
         msg!("NFT name -> {}", metadata.data.name);
         msg!("NFT uri -> {}", metadata.data.uri);
@@ -184,24 +193,6 @@ pub mod solcraft_breeding {
         //         ctx.accounts.authority.to_account_info().clone(),
         //     ],
         // )?;
-
-        // let male = &mut ctx.accounts.mint.to_account_info();
-        // let data = &male.data.borrow_mut()[..];
-
-        // let metad = Metadata::try_from_slice(
-        //     data
-        // )?;
-
-        // let meta = Metadata::from_account_info(
-        //     &ctx.accounts.mint.to_account_info()
-        // )?;
-
-        // msg!("meta is mutable: {}", meta.is_mutable);
-        // msg!("metad is mutable: {}", metad.is_mutable);
-
-        // let meta = Metadata::from_account_info(male)?;
-
-        // msg!("meta uri: {}", meta.uri);
 
         Ok(())
     }

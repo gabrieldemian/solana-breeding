@@ -1,12 +1,8 @@
-
-use anchor_spl::token::{Mint, TokenAccount};
-
+use anchor_lang::prelude::*;
 use crate::state::*;
-
 use {
-    anchor_lang::prelude::*,
     metaplex_token_metadata,
-    anchor_spl::token::Token
+    anchor_spl::token::{Token, Mint, TokenAccount},
 };
 
 #[derive(Accounts)]
@@ -86,11 +82,14 @@ pub struct Breed<'info> {
     #[account(mut)]
     pub mint: Account<'info, Mint>,
     
-    #[account(mut)]
+    #[account(mut, constraint = token.owner == authority.key() && token.mint == mint.key())]
     pub token: Account<'info, TokenAccount>,
 
-    #[account(mut)]
+    #[account(mut, constraint = metadata.owner.key() == metaplex_token_metadata::id())]
     pub metadata: AccountInfo<'info>,
+
+    // #[account(mut)]
+    pub candy_machine: Account<'info, CandyMachine>,
 }
 
 /* RENT TABLE */

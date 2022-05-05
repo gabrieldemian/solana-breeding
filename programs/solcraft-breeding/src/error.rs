@@ -10,4 +10,7 @@ pub enum ErrorCode {
 
     #[msg("There are no more NFTs to mint in this collection")]
     CandyMachineEmpty,
+
+    #[msg("You need to pass the candy machine PDA")]
+    CandyMachineWrongAddress,
 }

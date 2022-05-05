@@ -15,13 +15,25 @@ import {
 } from '../utils'
 
 const mintNFT = async () => {
-  /* make sure to replace the const 'candyMachine' */
-  /* on /constants.ts with your own address,
-  that you will get by running scripts/initializeCandyMachine.ts */
+  /* our PDA */
   const candyMachineState = await program.account.candyMachine.fetch(
     candyMachine
   )
+
+  /* the mint account is unique for each token */
+  /* for each NFT one mint account is generated */
+  /* for a fungible token, only one is created */
+
+  /* the authority use this account to mint tokens */
+  /* for himself or other people */
   const mint = Keypair.generate()
+
+  /* the associated token account between the wallet of the user */
+  /* and the mint account */
+
+  /* this token account is unique for each wallet */
+  /* this account simply stores how many tokens a user has */
+  /* for which token type (mint account) */
   const token = await getTokenWallet(
     DEVNET_WALLET.publicKey,
     mint.publicKey
@@ -51,7 +63,7 @@ const mintNFT = async () => {
     .accounts(accounts)
     .signers([mint])
     .preInstructions([
-      /* create a token/mint account and pay the rent */
+      /* create an account and pay the rent */
       SystemProgram.createAccount({
         fromPubkey: DEVNET_WALLET.publicKey,
         newAccountPubkey: mint.publicKey,
@@ -59,6 +71,9 @@ const mintNFT = async () => {
         lamports: rent,
         programId: TOKEN_PROGRAM_ID
       }),
+      /* make that account into a mint account */
+      /* this could also be an ERC20 miint account */
+      /* if the decimals is more than 0 */
       Token.createInitMintInstruction(
         TOKEN_PROGRAM_ID,
         mint.publicKey,
@@ -66,14 +81,18 @@ const mintNFT = async () => {
         DEVNET_WALLET.publicKey, // mint authority
         DEVNET_WALLET.publicKey // freeze authority
       ),
-      /* create an account that will hold your NFT */
+      /* create an associated token account between your wallet */
+      /* and the mint account */
+      /* create a token account that will hold your mint account */
+      /* you'll own this account */
+      /* in another words, an account that holds your NFT */
       createAssociatedTokenAccountInstruction(
         token, // associated account
         DEVNET_WALLET.publicKey, // payer
         DEVNET_WALLET.publicKey, // wallet address (to)
-        mint.publicKey // mint/token address
+        mint.publicKey // mint address
       ),
-      /* mint a NFT to the mint account */
+      /* mint one token (NFT) to your associated token account */
       Token.createMintToInstruction(
         TOKEN_PROGRAM_ID,
         mint.publicKey, // from

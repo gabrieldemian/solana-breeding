@@ -1,3 +1,4 @@
+#[warn(unused_imports)]
 use {
     crate::{error::ErrorCode, state::CandyMachineData},
     anchor_lang::prelude::*,
@@ -7,14 +8,18 @@ pub mod context;
 pub mod error;
 pub mod state;
 pub mod utils;
+// use solana_client::rpc_client::RpcClient;
 
 declare_id!("F4FfKsLLJjNR8WB6wpGufabkZFG6McptNuewPFSfKQM1");
 
 #[program]
 pub mod solcraft_breeding {
 
+    use std::convert::TryFrom;
+
     use super::*;
-    use metaplex_token_metadata::{instruction::{create_metadata_accounts, update_metadata_accounts}, state::{Creator}};
+    // use anchor_spl::token::{Mint, TokenAccount, Token};
+    use metaplex_token_metadata::{instruction::{create_metadata_accounts, update_metadata_accounts}, state::{Creator, Metadata}};
     use anchor_lang::solana_program::{program::{invoke_signed, invoke}, system_instruction};
 
     pub fn mint_nft(ctx: Context<MintNFT>, nft_name: String, nft_uri: String) -> Result<()> {
@@ -151,35 +156,59 @@ pub mod solcraft_breeding {
 
     pub fn breed(ctx: Context<Breed>) -> Result<()> {
 
-        invoke(
-            &spl_token::instruction::burn(
-                &ctx.accounts.token_program.key,
-                &ctx.accounts.token.key,
-                &ctx.accounts.mint.key(),
-                &ctx.accounts.authority.key,
-                &[&ctx.accounts.authority.key],
-                1,
-            )?,
-            &[
-                ctx.accounts.token_program.to_account_info().clone(),
-                ctx.accounts.token.to_account_info().clone(),
-                ctx.accounts.mint.to_account_info().clone(),
-                ctx.accounts.authority.to_account_info().clone(),
-            ],
-        )?;
 
-        // let male = &mut ctx.accounts.male.to_account_info();
+        // let mint = &ctx.accounts.mint.to_account_info();
+        let metadata = &ctx.accounts.metadata.to_account_info();
+
+        // msg!("vsf -> {:#?}", mint.data.take());
+        // let deserialized_metadata: &Metadata = 
+        //     mint
+        //     .deserialize_data()
+        //     .expect("no luck");
+
+        // let mint = mint.data.take();
+        // let nsei = Account::try_from_unchecked(mint)?;
+        // let mint = mint.as_ref();
+        
+        // msg!("metadata -> {}", mt.update_authority);
+
+        let vsf = Metadata::from_account_info(metadata)?;
+
+        msg!("owner of NFT -> {}", &ctx.accounts.token.owner);
+        msg!("NFT name -> {}", vsf.data.name);
+        msg!("NFT uri -> {}", vsf.data.uri);
+        msg!("NFT symbol -> {}", vsf.data.symbol);
+
+        // invoke(
+        //     &spl_token::instruction::burn(
+        //         &ctx.accounts.token_program.key,
+        //         &ctx.accounts.token.key(),
+        //         &ctx.accounts.mint.key(),
+        //         &ctx.accounts.authority.key,
+        //         &[&ctx.accounts.authority.key],
+        //         1,
+        //     )?,
+        //     &[
+        //         ctx.accounts.token_program.to_account_info().clone(),
+        //         ctx.accounts.token.to_account_info().clone(),
+        //         ctx.accounts.mint.to_account_info().clone(),
+        //         ctx.accounts.authority.to_account_info().clone(),
+        //     ],
+        // )?;
+
+        // let male = &mut ctx.accounts.mint.to_account_info();
         // let data = &male.data.borrow_mut()[..];
 
-        // let meta = Metadata::try_from_slice(
+        // let metad = Metadata::try_from_slice(
         //     data
         // )?;
 
         // let meta = Metadata::from_account_info(
-        //     &ctx.accounts.male.to_account_info()
+        //     &ctx.accounts.mint.to_account_info()
         // )?;
 
         // msg!("meta is mutable: {}", meta.is_mutable);
+        // msg!("metad is mutable: {}", metad.is_mutable);
 
         // let meta = Metadata::from_account_info(male)?;
 

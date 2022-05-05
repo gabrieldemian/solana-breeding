@@ -1,23 +1,35 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
-import { DEVNET_WALLET, getTokenWallet, program } from '../utils'
+import {
+  DEVNET_WALLET,
+  getMetadata,
+  getTokenWallet,
+  program
+} from '../utils'
 
 describe('will breed 2 pigs', () => {
   it('can breed', async () => {
     const mint = new PublicKey(
-      'EcEhyCbKvedMNGzdDFByU1kAKzYkFzHyUkHYyhbzv9Sj'
+      '95HB9nxTrMFuj32zeN77rNGyHBT4sRgn7LCX9P3yAiCT'
     )
 
     // get the associated account
     const token = await getTokenWallet(DEVNET_WALLET.publicKey, mint)
+    // const nsei = await provider.connection.getAccountInfo(token)
+    // console.log(nsei)
 
     // console.log('token is', token.toBase58())
+
+    const metadata = await getMetadata(mint)
+
+    console.log('meta', metadata.toBase58())
 
     const accounts = {
       authority: DEVNET_WALLET.publicKey,
       mint,
       token,
-      tokenProgram: TOKEN_PROGRAM_ID
+      tokenProgram: TOKEN_PROGRAM_ID,
+      metadata
     }
 
     // const largestAccounts =

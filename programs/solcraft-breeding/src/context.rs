@@ -1,5 +1,6 @@
 
-use anchor_spl::token::Mint;
+use anchor_spl::token::{Mint, TokenAccount};
+use metaplex_token_metadata::state::Metadata;
 
 use crate::state::*;
 
@@ -78,7 +79,6 @@ pub struct UpdateCandyMachine<'info> {
 pub struct Breed<'info> {
     // #[account(
     //     mut,
-    //     // constraint = male.to_account_info().owner == authority.to_account_info().key
     // )]
     // pub male: Account<'info, Mint>,
     pub authority: Signer<'info>,
@@ -88,7 +88,10 @@ pub struct Breed<'info> {
     pub mint: Account<'info, Mint>,
     
     #[account(mut)]
-    pub token: AccountInfo<'info>,
+    pub token: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub metadata: AccountInfo<'info>,
 }
 
 /* RENT TABLE */

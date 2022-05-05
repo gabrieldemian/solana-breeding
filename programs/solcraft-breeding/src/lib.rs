@@ -8,17 +8,13 @@ pub mod context;
 pub mod error;
 pub mod state;
 pub mod utils;
-// use solana_client::rpc_client::RpcClient;
 
 declare_id!("F4FfKsLLJjNR8WB6wpGufabkZFG6McptNuewPFSfKQM1");
 
 #[program]
 pub mod solcraft_breeding {
 
-    use std::convert::TryFrom;
-
     use super::*;
-    // use anchor_spl::token::{Mint, TokenAccount, Token};
     use metaplex_token_metadata::{instruction::{create_metadata_accounts, update_metadata_accounts}, state::{Creator, Metadata}};
     use anchor_lang::solana_program::{program::{invoke_signed, invoke}, system_instruction};
 
@@ -156,28 +152,21 @@ pub mod solcraft_breeding {
 
     pub fn breed(ctx: Context<Breed>) -> Result<()> {
 
-
         // let mint = &ctx.accounts.mint.to_account_info();
+        let token = &ctx.accounts.token.to_account_info();
         let metadata = &ctx.accounts.metadata.to_account_info();
+        let metadata = Metadata::from_account_info(metadata)?;
 
-        // msg!("vsf -> {:#?}", mint.data.take());
-        // let deserialized_metadata: &Metadata = 
-        //     mint
-        //     .deserialize_data()
-        //     .expect("no luck");
-
-        // let mint = mint.data.take();
-        // let nsei = Account::try_from_unchecked(mint)?;
-        // let mint = mint.as_ref();
-        
-        // msg!("metadata -> {}", mt.update_authority);
-
-        let vsf = Metadata::from_account_info(metadata)?;
-
-        msg!("owner of NFT -> {}", &ctx.accounts.token.owner);
-        msg!("NFT name -> {}", vsf.data.name);
-        msg!("NFT uri -> {}", vsf.data.uri);
-        msg!("NFT symbol -> {}", vsf.data.symbol);
+        msg!("owner of NFT -> {}", token.owner);
+        msg!("NFT name -> {}", metadata.data.name);
+        msg!("NFT uri -> {}", metadata.data.uri);
+        msg!("NFT metadata mint -> {}", metadata.mint);
+        match metadata.edition_nonce {
+            Some(v) => msg!("NFT metadata edition_nonce -> {}", v),
+            None => {}
+        }
+        msg!("NFT metadata update_authority -> {}", metadata.update_authority);
+        msg!("NFT symbol -> {}", metadata.data.symbol);
 
         // invoke(
         //     &spl_token::instruction::burn(

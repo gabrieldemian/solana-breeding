@@ -1,6 +1,5 @@
 
 use anchor_spl::token::{Mint, TokenAccount};
-use metaplex_token_metadata::state::Metadata;
 
 use crate::state::*;
 

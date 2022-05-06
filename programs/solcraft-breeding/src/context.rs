@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use crate::state::*;
 use {
     metaplex_token_metadata,
-    anchor_spl::token::{Token, Mint, TokenAccount},
+    anchor_spl::token::{Token, TokenAccount},
 };
 
 #[derive(Accounts)]
@@ -72,24 +72,36 @@ pub struct UpdateCandyMachine<'info> {
 
 #[derive(Accounts)]
 pub struct Breed<'info> {
-    // #[account(
-    //     mut,
-    // )]
-    // pub male: Account<'info, Mint>,
-    pub authority: Signer<'info>,
-    pub token_program: Program<'info, Token>,
+    #[account(
+        mut,
+        seeds = [PREFIX.as_bytes()],
+        bump = candy_machine.bump
+    )]
+    pub candy_machine: Account<'info, CandyMachine>,
 
     #[account(mut)]
-    pub mint: Account<'info, Mint>,
-    
-    #[account(mut, constraint = token.owner == authority.key() && token.mint == mint.key())]
-    pub token: Account<'info, TokenAccount>,
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub authority: Signer<'info>,
 
-    #[account(mut, constraint = metadata.owner.key() == metaplex_token_metadata::id())]
+    #[account(mut)]
+    // /// CHECK: account checked in CPI
     pub metadata: AccountInfo<'info>,
 
-    // #[account(mut)]
-    pub candy_machine: Account<'info, CandyMachine>,
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    #[account(mut)]
+    pub mint: AccountInfo<'info>,
+    pub token_program: Program<'info, Token>,
+
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    #[account(address = metaplex_token_metadata::id())]
+    pub token_metadata_program: AccountInfo<'info>,
+    pub system_program: Program<'info, System>,
+    pub rent: Sysvar<'info, Rent>,
+
+    #[account(constraint = male.owner == authority.key())]
+    pub male: Account<'info, TokenAccount>,
+    #[account(constraint = female.owner == authority.key())]
+    pub female: Account<'info, TokenAccount>,
 }
 
 /* RENT TABLE */

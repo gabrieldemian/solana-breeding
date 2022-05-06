@@ -1,0 +1,51 @@
+{
+  "name": "Pig Child #1",
+  "symbol": "SOLCRAFT",
+  "description": "SolCraft is P2E Action-RTS gamefi hybrid fantasy game built on Unity and Solana Blockchain for gamers who love to game but also caters for investors who want to earn passively in a fun way.",
+  "seller_fee_basis_points": 1000,
+  "image": "https://clipartmag.com/images/pig-cartoon-images-7.jpg",
+  "external_url": "https://solcraft.online",
+  "edition": 3534,
+  "collection": { "name": "SolCraft Breeding", "family": "SolCraft" },
+  "attributes": [
+    { "trait_type": "Background", "value": "Blue" },
+    { "trait_type": "Fur", "value": "Green" },
+    { "trait_type": "Skin", "value": "Normal" },
+    { "trait_type": "Tusks", "value": "Gold" },
+    { "trait_type": "Gender", "value": "Male" },
+    { "trait_type": "Mutation Gene", "value": "Nothing" },
+    { "trait_type": "Stamina", "value": "20%" },
+    { "trait_type": "Speed", "value": "10%" },
+    { "trait_type": "Recovery", "value": "40%" },
+    { "trait_type": "Strength", "value": "50%" },
+    { "trait_type": "Defence", "value": "10%" },
+    { "trait_type": "Boost", "value": "30%" }
+  ],
+  "properties": {
+    "files": [
+      {
+        "uri": "https://arweave.net/vuqikjcMq_YKH09FfftQRxhZUBpubK4qzC0gI4xxP4U?ext=png",
+        "type": "image/png"
+      }
+    ],
+    "category": "image",
+    "creators": [
+      {
+        "address": "5WabWzgn2ArEccX8XgEDPvjPPLJrqNHeDGpAq99es4Yp",
+        "share": 25
+      },
+      {
+        "address": "8PUiQWzTtHnTAVuE4vJjkKMApujiD7f7vJz2hqBd7Eyn",
+        "share": 25
+      },
+      {
+        "address": "794zywxz2tByGZpEEKJVBYnWJghqddAF7vdApjypDnP4",
+        "share": 25
+      },
+      {
+        "address": "FwmuBYKcaJzfHRDAsAZuYyuuTcwgP6Z7T59UksHejKQk",
+        "share": 25
+      }
+    ]
+  }
+}

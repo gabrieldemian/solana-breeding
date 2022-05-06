@@ -13,4 +13,7 @@ pub enum ErrorCode {
 
     #[msg("You need to pass the candy machine PDA")]
     CandyMachineWrongAddress,
+
+    #[msg("You do not own one of the NFTs sent")]
+    NotOwnerOfNFT,
 }

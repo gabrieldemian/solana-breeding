@@ -55,6 +55,8 @@ const mintNFT = async () => {
     rent: SYSVAR_RENT_PUBKEY
   }
 
+  console.log(MintLayout.span)
+
   await program.methods
     .mintNft(
       'Pig #1',

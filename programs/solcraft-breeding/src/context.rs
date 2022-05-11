@@ -85,13 +85,6 @@ pub struct InitializePigMachine<'info> {
 #[derive(Accounts)]
 #[instruction(data: StakeData)]
 pub struct Stake<'info> {
-    // #[account(
-    //     seeds = [PREFIX_PIG.as_bytes()],
-    //     bump = pig_machine.bump,
-    //     constraint = pig_machine.to_account_info().owner == program_id
-    // )]
-    // pub pig_machine: Account<'info, PigMachine>,
-
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub mint: AccountInfo<'info>,
 
@@ -105,6 +98,34 @@ pub struct Stake<'info> {
     #[account(mut)]
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub destination: AccountInfo<'info>,
+}
+
+#[derive(Accounts)]
+pub struct Unstake<'info> {
+    #[account(
+        mut,
+        seeds = [PREFIX_PIG.as_bytes()],
+        bump = pig_machine.bump,
+        constraint = pig_machine.to_account_info().owner == program_id
+    )]
+    pub pig_machine: Account<'info, PigMachine>,
+
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub mint: AccountInfo<'info>,
+
+    #[account(mut, constraint = token.owner == authority.key())]
+    pub token: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub authority: AccountInfo<'info>,
+    pub token_program: Program<'info, Token>,
+
+    #[account(mut)]
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub destination: AccountInfo<'info>,
+
+    // fee payer
+    pub payer: Signer<'info>,
 }
 
 #[derive(Accounts)]

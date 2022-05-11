@@ -287,6 +287,48 @@ pub mod solcraft_breeding {
         Ok(())
     }
 
+    pub fn unstake(ctx: Context<Unstake>) -> Result<()> {
+
+        let _now = Clock::get().unwrap().unix_timestamp as u32;
+        let mint = &ctx.accounts.mint;
+        let token = &ctx.accounts.token.to_account_info();
+        let authority = &ctx.accounts.authority.to_account_info();
+        let pig_machine = &ctx.accounts.pig_machine;
+        let token_program = &ctx.accounts.token_program.to_account_info();
+        let destination = &ctx.accounts.destination.to_account_info();
+
+        let account_infos = vec![
+            token_program.clone(),
+            authority.clone(),
+            mint.clone(),
+            token.clone(),
+            pig_machine.to_account_info().clone(),
+            destination.clone(),
+        ];
+
+        let signers_seeds = [
+            state::PREFIX_PIG.as_bytes(),
+            &[pig_machine.bump]
+        ];
+
+        invoke_signed(
+            &spl_token::instruction::transfer_checked(
+                &token_program.key(),
+                token.key, // token of the current owner
+                mint.key,
+                destination.key, // token (ATA) of the receiver
+                authority.key, // the current owner
+                &[authority.key],
+                1,
+                0
+            )?,
+            account_infos.as_slice(),
+            &[&signers_seeds],
+        )?;
+
+        Ok(())
+    }
+
     pub fn stake(
         ctx: Context<Stake>,
         data: StakeData,
@@ -328,22 +370,6 @@ pub mod solcraft_breeding {
         Ok(())
     }
 
-    pub fn initialize_pig_machine(
-        ctx: Context<InitializePigMachine>,
-        data: PigMachineData,
-    ) -> Result<()> {
-
-        let pig_machine = &mut ctx.accounts.pig_machine;
-
-        msg!("pubkey {}", pig_machine.key());
-
-        pig_machine.data = data;
-        pig_machine.authority = *ctx.accounts.authority.key;
-        pig_machine.bump = *ctx.bumps.get("pig_machine").unwrap();
-
-        Ok(())
-    }
-
     pub fn update_candy_machine(
         ctx: Context<UpdateCandyMachine>,
         price: Option<u64>,
@@ -363,6 +389,22 @@ pub mod solcraft_breeding {
             msg!("Go live date changed to {}", go_l);
             candy_machine.data.go_live_date = Some(go_l);
         };
+
+        Ok(())
+    }
+
+    pub fn initialize_pig_machine(
+        ctx: Context<InitializePigMachine>,
+        data: PigMachineData,
+    ) -> Result<()> {
+
+        let pig_machine = &mut ctx.accounts.pig_machine;
+
+        msg!("pubkey {}", pig_machine.key());
+
+        pig_machine.data = data;
+        pig_machine.authority = *ctx.accounts.authority.key;
+        pig_machine.bump = *ctx.bumps.get("pig_machine").unwrap();
 
         Ok(())
     }

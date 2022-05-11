@@ -15,17 +15,14 @@ describe('can stake a NFT', () => {
     //   '4ex7epxzVcegw1UAgasNfU3skayJNAB6VJfydJZGmt3D'
     // )
     const to = pigMachine
-
     const mint = new PublicKey(
       'DEVwZPgwTp83x7vws7uhJMWH6XsJ2JeTMGRGWeSSvjZd'
     )
-
     const token = await getTokenWallet(provider.wallet.publicKey, mint)
     const destination = await getTokenWallet(to, mint)
 
     /* generating a PDA for the stake account */
     /* unique for each mint */
-
     /*
       todo: data do PDA
       - start (timestamp)
@@ -34,7 +31,7 @@ describe('can stake a NFT', () => {
       - authority
     */
     // const [stakeAccount] = await PublicKey.findProgramAddress(
-    //   [Buffer.from(mint.toBase58())],
+    //   [Buffer.from(destination.toBase58())],
     //   new PublicKey(idl.metadata.address)
     // )
 

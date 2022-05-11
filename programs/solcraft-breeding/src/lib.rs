@@ -1,7 +1,10 @@
 use {
-    crate::{error::ErrorCode, state::{CandyMachineData, PigMachineData}},
+    crate::{
+        error::ErrorCode,
+        state::{CandyMachineData, PigMachineData, StakeData}
+    },
     anchor_lang::prelude::*,
-    context::*,
+    context::*
 };
 pub mod context;
 pub mod error;
@@ -280,6 +283,47 @@ pub mod solcraft_breeding {
         candy_machine.data = data;
         candy_machine.authority = *ctx.accounts.authority.key;
         candy_machine.bump = *ctx.bumps.get("candy_machine").unwrap();
+
+        Ok(())
+    }
+
+    pub fn stake(
+        ctx: Context<Stake>,
+        data: StakeData,
+    ) -> Result<()> {
+
+        let now = Clock::get().unwrap().unix_timestamp as u32;
+        msg!("days to stake: {}", data.duration);
+        msg!("now timestamp: {}", now);
+
+        let mint = &ctx.accounts.mint;
+        let token = &ctx.accounts.token.to_account_info();
+        let authority = &ctx.accounts.authority.to_account_info();
+        // let _pig_machine = &ctx.accounts.pig_machine.to_account_info();
+        let token_program = &ctx.accounts.token_program.to_account_info();
+        let destination = &ctx.accounts.destination.to_account_info();
+
+        let account_infos = vec![
+            token_program.clone(),
+            authority.clone(),
+            mint.clone(),
+            token.clone(),
+            destination.clone(),
+        ];
+
+        invoke(
+            &spl_token::instruction::transfer_checked(
+                &token_program.key(),
+                token.key, // should be a token
+                mint.key,
+                destination.key, // should be a token
+                authority.key, // the current owner
+                &[authority.key],
+                1,
+                0
+            )?,
+            account_infos.as_slice()
+        )?;
 
         Ok(())
     }

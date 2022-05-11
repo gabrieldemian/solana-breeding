@@ -43,6 +43,12 @@ pub struct PigMachineData {
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, PartialEq)]
+pub struct StakeData {
+    /// in days
+    pub duration: u32,
+}
+
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, PartialEq)]
 pub struct CandyMachineData {
     pub price: u64,
     pub nfts_minted: u64,

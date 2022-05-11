@@ -77,10 +77,34 @@ pub struct InitializePigMachine<'info> {
     )]
     pub pig_machine: Account<'info, PigMachine>,
 
-    /* the authority will also receive SOL from sales fees */
     #[account(mut)]
     pub authority: Signer<'info>,
     pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(data: StakeData)]
+pub struct Stake<'info> {
+    // #[account(
+    //     seeds = [PREFIX_PIG.as_bytes()],
+    //     bump = pig_machine.bump,
+    //     constraint = pig_machine.to_account_info().owner == program_id
+    // )]
+    // pub pig_machine: Account<'info, PigMachine>,
+
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub mint: AccountInfo<'info>,
+
+    #[account(mut, constraint = token.owner == authority.key())]
+    pub token: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+
+    #[account(mut)]
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    pub destination: AccountInfo<'info>,
 }
 
 #[derive(Accounts)]
@@ -98,7 +122,8 @@ pub struct Breed<'info> {
     #[account(
         mut,
         seeds = [PREFIX_CANDY.as_bytes()],
-        bump = candy_machine.bump
+        bump = candy_machine.bump,
+        constraint = candy_machine.to_account_info().owner == program_id
     )]
     pub candy_machine: Account<'info, CandyMachine>,
 

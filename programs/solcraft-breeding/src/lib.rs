@@ -314,9 +314,9 @@ pub mod solcraft_breeding {
         invoke(
             &spl_token::instruction::transfer_checked(
                 &token_program.key(),
-                token.key, // should be a token
+                token.key, // token of the current owner
                 mint.key,
-                destination.key, // should be a token
+                destination.key, // token (ATA) of the receiver
                 authority.key, // the current owner
                 &[authority.key],
                 1,

@@ -11,12 +11,13 @@ import {
 
 describe('can stake a NFT', () => {
   it('can stake', async () => {
-    const to = new PublicKey(
-      '4ex7epxzVcegw1UAgasNfU3skayJNAB6VJfydJZGmt3D'
-    )
+    // const to = new PublicKey(
+    //   '4ex7epxzVcegw1UAgasNfU3skayJNAB6VJfydJZGmt3D'
+    // )
+    const to = pigMachine
 
     const mint = new PublicKey(
-      'BjVaSyuz6nq4RJqpoY3QYmUZpMFE385ghrix16RCe5U4'
+      'DEVwZPgwTp83x7vws7uhJMWH6XsJ2JeTMGRGWeSSvjZd'
     )
 
     const token = await getTokenWallet(provider.wallet.publicKey, mint)

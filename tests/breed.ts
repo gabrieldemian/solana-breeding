@@ -5,6 +5,8 @@ import {
   SystemProgram,
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js'
+import { Accounts } from '@project-serum/anchor'
+import { IdlAccountItem } from '@project-serum/anchor/dist/cjs/idl'
 import {
   createAssociatedTokenAccountInstruction,
   DEVNET_WALLET,
@@ -22,9 +24,6 @@ describe('will breed 2 pigs', () => {
         MintLayout.span
       )
 
-    await provider.connection.getMinimumBalanceForRentExemption(
-      MintLayout.span
-    )
     const mint = new PublicKey(
       '95HB9nxTrMFuj32zeN77rNGyHBT4sRgn7LCX9P3yAiCT'
     )
@@ -58,6 +57,15 @@ describe('will breed 2 pigs', () => {
 
     // const male = await getTokenWallet(DEVNET_WALLET.publicKey, maleMint)
 
+    // const largestAccounts =
+    //   await provider.connection.getTokenLargestAccounts(male)
+
+    // const largestAccountInfo =
+    //   await provider.connection.getParsedAccountInfo(
+    //     largestAccounts.value[0].address
+    //   )
+    // console.log('owner ', largestAccountInfo.value.data)
+
     const accounts = {
       authority: DEVNET_WALLET.publicKey,
       tokenProgram: TOKEN_PROGRAM_ID,
@@ -72,16 +80,7 @@ describe('will breed 2 pigs', () => {
       male,
       female,
       rent: SYSVAR_RENT_PUBKEY
-    }
-
-    // const largestAccounts =
-    //   await provider.connection.getTokenLargestAccounts(male)
-
-    // const largestAccountInfo =
-    //   await provider.connection.getParsedAccountInfo(
-    //     largestAccounts.value[0].address
-    //   )
-    // console.log('owner ', largestAccountInfo.value.data)
+    } as Accounts<IdlAccountItem>
 
     await program.methods
       .breed()

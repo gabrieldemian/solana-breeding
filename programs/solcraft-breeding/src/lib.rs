@@ -1,6 +1,5 @@
-#[warn(unused_imports)]
 use {
-    crate::{error::ErrorCode, state::CandyMachineData},
+    crate::{error::ErrorCode, state::{CandyMachineData, PigMachineData}},
     anchor_lang::prelude::*,
     context::*,
 };
@@ -15,7 +14,7 @@ declare_id!("F4FfKsLLJjNR8WB6wpGufabkZFG6McptNuewPFSfKQM1");
 pub mod solcraft_breeding {
 
     use super::*;
-    use metaplex_token_metadata::{instruction::{create_metadata_accounts, update_metadata_accounts}, state::{Creator, Metadata}};
+    use metaplex_token_metadata::{instruction::{create_metadata_accounts, update_metadata_accounts}, state::{Creator}};
     use anchor_lang::solana_program::{program::{invoke_signed, invoke}, system_instruction};
 
     pub fn mint_nft(ctx: Context<MintNFT>, nft_name: String, nft_uri: String) -> Result<()> {
@@ -59,7 +58,7 @@ pub mod solcraft_breeding {
         /* increment the counter of total mints by 1 */
         candy_machine.data.nfts_minted += 1;
 
-        let authority_seeds = [state::PREFIX.as_bytes(), &[candy_machine.bump]];
+        let authority_seeds = [state::PREFIX_CANDY.as_bytes(), &[candy_machine.bump]];
 
         let mut creators: Vec<Creator> = vec![Creator {
             address: candy_machine.key(),
@@ -158,10 +157,10 @@ pub mod solcraft_breeding {
         // let metadata = Metadata::from_account_info(metadata_account)?;
         // let new_mint = &ctx.accounts.mint.to_account_info();
         // let token = &ctx.accounts.token.to_account_info();
-        let male = &ctx.accounts.male.to_account_info();
-        let female = &ctx.accounts.male.to_account_info();
+        let _male = &ctx.accounts.male.to_account_info();
+        let _female = &ctx.accounts.male.to_account_info();
 
-        let authority_seeds = [state::PREFIX.as_bytes(), &[candy_machine.bump]];
+        let authority_seeds = [state::PREFIX_CANDY.as_bytes(), &[candy_machine.bump]];
 
         let mut creators: Vec<Creator> = vec![Creator {
             address: candy_machine.key(),
@@ -281,6 +280,22 @@ pub mod solcraft_breeding {
         candy_machine.data = data;
         candy_machine.authority = *ctx.accounts.authority.key;
         candy_machine.bump = *ctx.bumps.get("candy_machine").unwrap();
+
+        Ok(())
+    }
+
+    pub fn initialize_pig_machine(
+        ctx: Context<InitializePigMachine>,
+        data: PigMachineData,
+    ) -> Result<()> {
+
+        let pig_machine = &mut ctx.accounts.pig_machine;
+
+        msg!("pubkey {}", pig_machine.key());
+
+        pig_machine.data = data;
+        pig_machine.authority = *ctx.accounts.authority.key;
+        pig_machine.bump = *ctx.bumps.get("pig_machine").unwrap();
 
         Ok(())
     }

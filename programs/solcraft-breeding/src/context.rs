@@ -9,7 +9,7 @@ use {
 pub struct MintNFT<'info> {
     #[account(
         mut,
-        seeds = [PREFIX.as_bytes()],
+        seeds = [PREFIX_CANDY.as_bytes()],
         bump = candy_machine.bump
     )]
     pub candy_machine: Account<'info, CandyMachine>,
@@ -40,7 +40,7 @@ pub struct MintNFT<'info> {
 pub struct InitializeCandyMachine<'info> {
     #[account(
         init,
-        seeds=[PREFIX.as_bytes()],
+        seeds=[PREFIX_CANDY.as_bytes()],
         payer = authority,
         space =
             8  +  // discriminator
@@ -53,6 +53,29 @@ pub struct InitializeCandyMachine<'info> {
         constraint = candy_machine.to_account_info().owner == program_id
     )]
     pub candy_machine: Account<'info, CandyMachine>,
+
+    /* the authority will also receive SOL from sales fees */
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+#[instruction(data: PigMachineData)]
+pub struct InitializePigMachine<'info> {
+    #[account(
+        init,
+        seeds=[PREFIX_PIG.as_bytes()],
+        payer = authority,
+        space =
+            8  +  // discriminator
+            // stake_items, * 6 = number of item for each table of item
+            // * 4 number of tables of stake_items
+            (( 4 + (1 + 1 + 4 + 15) * 2 ) * 6) * 4 ,
+        bump,
+        constraint = pig_machine.to_account_info().owner == program_id
+    )]
+    pub pig_machine: Account<'info, PigMachine>,
 
     /* the authority will also receive SOL from sales fees */
     #[account(mut)]
@@ -74,7 +97,7 @@ pub struct UpdateCandyMachine<'info> {
 pub struct Breed<'info> {
     #[account(
         mut,
-        seeds = [PREFIX.as_bytes()],
+        seeds = [PREFIX_CANDY.as_bytes()],
         bump = candy_machine.bump
     )]
     pub candy_machine: Account<'info, CandyMachine>,
@@ -84,7 +107,7 @@ pub struct Breed<'info> {
     pub authority: Signer<'info>,
 
     #[account(mut)]
-    // /// CHECK: account checked in CPI
+    /// CHECK: account checked in CPI
     pub metadata: AccountInfo<'info>,
 
     /// CHECK: This is not dangerous because we don't read or write from this account

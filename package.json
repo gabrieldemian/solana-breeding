@@ -11,9 +11,13 @@
     "lint": "npx eslint --ext .js,.ts ./ --fix",
     "build-types": "tsc --noEmit --pretty",
     "test-mint": "anchor run test_mint",
-    "test-candy": "anchor run test_init_candy_machine",
+    "test-candy-machine": "anchor run test_init_candy_machine",
+    "test-pig-machine": "anchor run test_init_pig_machine",
     "test-update_candy": "anchor run test_update_candy_machine",
-    "test-breed": "anchor run test_breed"
+    "test-breed": "anchor run test_breed",
+    "test-stake": "anchor run test_stake",
+    "test-unstake": "anchor run test_unstake",
+    "log-pig-machine": "anchor run log_pig_machine"
   },
   "devDependencies": {
     "@types/chai": "^4.2.22",

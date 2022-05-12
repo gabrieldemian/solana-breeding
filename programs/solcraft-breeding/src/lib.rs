@@ -289,7 +289,7 @@ pub mod solcraft_breeding {
 
     pub fn unstake(ctx: Context<Unstake>) -> Result<()> {
 
-        let now = Clock::get().unwrap().unix_timestamp as u32;
+        let _now = Clock::get().unwrap().unix_timestamp as u32;
         let mint = &ctx.accounts.mint;
         let token = &ctx.accounts.token.to_account_info();
         let authority = &ctx.accounts.authority.to_account_info();
@@ -299,9 +299,9 @@ pub mod solcraft_breeding {
         let stake_account = &mut ctx.accounts.stake_account;
         let payer = &ctx.accounts.payer.to_account_info();
 
-        if now < stake_account.end {
-            return Err(ErrorCode::StakeNotReady.into());
-        }
+        // if now < stake_account.end {
+        //     return Err(ErrorCode::StakeNotReady.into());
+        // }
 
         let account_infos = vec![
             token_program.clone(),
@@ -332,22 +332,32 @@ pub mod solcraft_breeding {
         //     &[&signers_seeds],
         // )?;
 
-         /* @todo: close stake account */
-        invoke_signed(
-            &spl_token::instruction::close_account(
-                &token_program.key(),
-                &stake_account.key(),
-                &payer.key(),
-                authority.key,
-                &[]
-            )?,
-            &[
-                ctx.accounts.stake_account.to_account_info().clone(),
-                ctx.accounts.payer.to_account_info().clone(),
-                ctx.accounts.authority.clone(),
-            ],
+        // invoke_signed(
+        //     &spl_token::instruction::close_account(
+        //         &token_program.key(),
+        //         &stake_account.key(),
+        //         &payer.key(),
+        //         &stake_account.key(),
+        //         &[]
+        //     )?,
+        //     &[
+        //         ctx.accounts.token_program.to_account_info().clone(),
+        //         ctx.accounts.stake_account.to_account_info().clone(),
+        //         ctx.accounts.payer.to_account_info().clone(),
+        //         ctx.accounts.authority.clone(),
+        //     ],
+        //     &[&signers_seeds],
+        // )?;
+
+        anchor_spl::token::close_account(CpiContext::new_with_signer(
+            ctx.accounts.token_program.to_account_info(),
+            anchor_spl::token::CloseAccount {
+                account: stake_account.to_account_info(),
+                destination: payer.clone(),
+                authority: stake_account.to_account_info(),
+            },
             &[&signers_seeds],
-        )?;
+        ))?;
 
         Ok(())
     }

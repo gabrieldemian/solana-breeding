@@ -97,21 +97,6 @@ pub struct Stake<'info> {
     )]
     pub stake_account: Account<'info, StakeAccount>,
 
-    #[account(mut, constraint = token.owner == authority.key())]
-    pub token: Account<'info, TokenAccount>,
-
-    #[account(mut)]
-    pub authority: Signer<'info>,
-    pub token_program: Program<'info, Token>,
-
-    #[account(mut)]
-    /// CHECK: This is not dangerous because we don't read or write from this account
-    pub destination: AccountInfo<'info>,
-    pub system_program: Program<'info, System>,
-}
-
-#[derive(Accounts)]
-pub struct Unstake<'info> {
     #[account(
         mut,
         seeds = [PREFIX_PIG.as_bytes()],
@@ -120,7 +105,29 @@ pub struct Unstake<'info> {
     )]
     pub pig_machine: Account<'info, PigMachine>,
 
+    #[account(mut, constraint = token.owner == authority.key())]
+    pub token: Account<'info, TokenAccount>,
+
+    #[account(mut)]
+    pub authority: Signer<'info>,
+    pub token_program: Program<'info, Token>,
+
+    #[account(mut)]
+    pub destination: Account<'info, TokenAccount>,
+    pub system_program: Program<'info, System>,
+}
+
+#[derive(Accounts)]
+pub struct Unstake<'info> {
     #[account(
+        seeds = [PREFIX_PIG.as_bytes()],
+        bump = pig_machine.bump,
+        constraint = pig_machine.to_account_info().owner == program_id
+    )]
+    pub pig_machine: Account<'info, PigMachine>,
+
+    #[account(
+        mut,
         seeds=[mint.to_account_info().key.to_string()[0..=16].as_bytes()],
         bump,
         constraint = stake_account.to_account_info().owner == program_id
@@ -133,15 +140,15 @@ pub struct Unstake<'info> {
     #[account(mut, constraint = token.owner == authority.key())]
     pub token: Account<'info, TokenAccount>,
 
-    #[account(mut)]
+    /// CHECK: This is not dangerous because we don't read or write from this account
     pub authority: AccountInfo<'info>,
     pub token_program: Program<'info, Token>,
 
     #[account(mut)]
-    /// CHECK: This is not dangerous because we don't read or write from this account
-    pub destination: AccountInfo<'info>,
+    pub destination: Account<'info, TokenAccount>,
 
     // fee payer
+    #[account(mut)]
     pub payer: Signer<'info>,
 }
 

@@ -12,23 +12,20 @@ import {
 describe('can unstake a NFT', () => {
   it('can unstake', async () => {
     const mint = new PublicKey(
-      '8arK5NxyQwrNRfTiUVxYPyN2rX8SzuZu9FGJRDToKNHw'
+      'AHzttKoSjAyrPQLqFfh5sh1ws9XYYbp8AFmiZvEG1kXW'
     )
+    /* to whom the token will be given */
     const to = provider.wallet.publicKey
     /* token of the next owner */
     const destination = await getTokenWallet(to, mint)
     /* token of the current owner */
     const token = await getTokenWallet(pigMachine, mint)
 
+    /* getting a PDA for the stake account */
     const [stakeAccount] = await PublicKey.findProgramAddress(
       [Buffer.from(mint.toString().slice(0, 17))],
       new PublicKey(idl.metadata.address)
     )
-
-    /* 4RGk1iswDK99pC2JPns2ByAmv8nKWd1UFt5tMiVfBcyd */
-    console.log('stakeAccount -> ', stakeAccount.toBase58())
-    console.log('destination -> ', destination.toBase58())
-    console.log('token -> ', token.toBase58())
 
     const accounts = {
       mint,
@@ -43,13 +40,10 @@ describe('can unstake a NFT', () => {
 
     const destinationAccount =
       await provider.connection.getParsedAccountInfo(destination)
-    const destinationHasToken = !!destinationAccount.value
 
-    // console.log('destinationAccount -> ', destinationAccount.value.data)
-    console.log(
-      'does the destination has a token address for that NFT? ',
-      destinationHasToken
-    )
+    /* if the receiver has a token account, we create it */
+    /* if not, we just skip this step */
+    const destinationHasToken = !!destinationAccount.value
 
     let tx = program.methods.unstake().accounts(accounts)
 
@@ -65,6 +59,15 @@ describe('can unstake a NFT', () => {
         )
       ])
     }
+
+    console.log('mint ->', mint.toBase58())
+    console.log('stakeAccount -> ', stakeAccount.toBase58())
+    console.log('destination token -> ', destination.toBase58())
+    console.log('token -> ', token.toBase58())
+    console.log(
+      'does the destination has a token address for that NFT? ',
+      destinationHasToken
+    )
 
     await tx.rpc()
   })

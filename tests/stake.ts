@@ -11,57 +11,42 @@ import {
 
 describe('can stake a NFT', () => {
   it('can stake', async () => {
-    const to = pigMachine
     const mint = new PublicKey(
-      '8arK5NxyQwrNRfTiUVxYPyN2rX8SzuZu9FGJRDToKNHw'
+      'AHzttKoSjAyrPQLqFfh5sh1ws9XYYbp8AFmiZvEG1kXW'
     )
-    const token = await getTokenWallet(provider.wallet.publicKey, mint)
+    /* to whom the token will be given */
+    const to = pigMachine
     /* token account of the pig PDA */
     const destination = await getTokenWallet(to, mint)
+    /* token of the current owner */
+    const token = await getTokenWallet(provider.wallet.publicKey, mint)
 
     /* generating a PDA for the stake account */
-    /* unique for each mint */
     const [stakeAccount] = await PublicKey.findProgramAddress(
       [Buffer.from(mint.toString().slice(0, 17))],
       new PublicKey(idl.metadata.address)
     )
 
-    console.log('stakeAccount -> ', stakeAccount.toBase58())
-
     const accounts = {
-      stakeAccount,
       mint,
       token,
+      pigMachine,
       destination,
-      authority: provider.wallet.publicKey,
-      tokenProgram: TOKEN_PROGRAM_ID
+      stakeAccount,
+      tokenProgram: TOKEN_PROGRAM_ID,
+      authority: provider.wallet.publicKey
     }
 
     const destinationAccount =
       await provider.connection.getParsedAccountInfo(destination)
 
+    /* if the receiver has a token account, we create it */
+    /* if not, we just skip this step */
     const destinationHasToken = !!destinationAccount.value
 
     let tx = program.methods.stake().accounts(accounts)
 
     let preInstructions = []
-
-    // if (!existStakeAccount) {
-    //   const rent =
-    //     await provider.connection.getMinimumBalanceForRentExemption(
-    //       8 + 4 + 32 + 32
-    //     )
-    //   preInstructions = [
-    //     ...preInstructions,
-    //     SystemProgram.createAccount({
-    //       fromPubkey: provider.wallet.publicKey,
-    //       newAccountPubkey: stakeAccount,
-    //       space: 8 + 4 + 32 + 32,
-    //       lamports: rent,
-    //       programId: TOKEN_PROGRAM_ID
-    //     })
-    //   ]
-    // }
 
     /* if the target doesn't have an associated token account */
     /* first, we need to create one for him, and then transfer the token */
@@ -81,10 +66,10 @@ describe('can stake a NFT', () => {
       tx = tx.preInstructions(preInstructions)
     }
 
-    console.log('\n')
-    console.log('mint: ', mint.toBase58())
-    console.log('token: ', token.toBase58())
-    console.log('destination token: ', destination.toBase58())
+    console.log('mint -> ', mint.toBase58())
+    console.log('stakeAccount -> ', stakeAccount.toBase58())
+    console.log('destination token -> ', destination.toBase58())
+    console.log('token -> ', token.toBase58())
     console.log('\n')
     console.log(
       'does the destination has a token address for that NFT? ',
@@ -94,9 +79,9 @@ describe('can stake a NFT', () => {
 
     await tx.rpc()
 
-    const stakeAccountData = await program.account.stakeAccount.fetch(
-      stakeAccount
-    )
-    console.log('stake data:', stakeAccountData)
+    // const stakeAccountData = await program.account.stakeAccount.fetch(
+    //   stakeAccount
+    // )
+    // console.log('stake data:', stakeAccountData)
   })
 })

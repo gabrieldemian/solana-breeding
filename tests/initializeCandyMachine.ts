@@ -22,7 +22,7 @@ describe('starting initialize candy machine test', () => {
       ],
       symbol: 'PIG',
       sellerFeeBasisPoints: 500, // 500 = 5%
-      maxSupply: new BN(48)
+      maxSupply: new BN(9999)
     }
 
     console.log('\n take this address and replace on /constants.ts')

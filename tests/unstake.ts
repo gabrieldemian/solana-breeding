@@ -12,7 +12,7 @@ import {
 describe('can unstake a NFT', () => {
   it('can unstake', async () => {
     const mint = new PublicKey(
-      'AHzttKoSjAyrPQLqFfh5sh1ws9XYYbp8AFmiZvEG1kXW'
+      'H24zjW47Gvf4pKJb39ZTFegSNxaxVFjGK86oihBJhfV1'
     )
     /* to whom the token will be given */
     const to = provider.wallet.publicKey

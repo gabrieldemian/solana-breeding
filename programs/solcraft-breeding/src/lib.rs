@@ -290,14 +290,14 @@ pub mod solcraft_breeding {
     pub fn unstake(ctx: Context<Unstake>) -> Result<()> {
 
         let _now = Clock::get().unwrap().unix_timestamp as u32;
-        let mint = &ctx.accounts.mint;
+        let mint = &ctx.accounts.mint.to_account_info();
         let token = &ctx.accounts.token.to_account_info();
         let authority = &ctx.accounts.authority.to_account_info();
         let pig_machine = &ctx.accounts.pig_machine;
         let token_program = &ctx.accounts.token_program.to_account_info();
         let destination = &ctx.accounts.destination.to_account_info();
         let stake_account = &mut ctx.accounts.stake_account;
-        let payer = &ctx.accounts.payer.to_account_info();
+        let payer = &mut ctx.accounts.payer.to_account_info();
 
         // if now < stake_account.end {
         //     return Err(ErrorCode::StakeNotReady.into());
@@ -317,20 +317,27 @@ pub mod solcraft_breeding {
             &[pig_machine.bump]
         ];
 
-        // invoke_signed(
-        //     &spl_token::instruction::transfer_checked(
-        //         &token_program.key(),
-        //         token.key, // token of the current owner
-        //         mint.key,
-        //         destination.key, // token (ATA) of the receiver
-        //         authority.key, // the current owner
-        //         &[authority.key],
-        //         1,
-        //         0
-        //     )?,
-        //     account_infos.as_slice(),
-        //     &[&signers_seeds],
-        // )?;
+        invoke_signed(
+            &spl_token::instruction::transfer_checked(
+                &token_program.key(),
+                token.key, // token of the current owner
+                mint.key,
+                destination.key, // token (ATA) of the receiver
+                authority.key, // the current owner
+                &[authority.key],
+                1,
+                0
+            )?,
+            account_infos.as_slice(),
+            &[&signers_seeds],
+        )?;
+
+        let seed = &mint.to_account_info().key.to_string()[0..=16];
+
+        let signers_seeds = [
+            seed.as_bytes(),
+            &[stake_account.bump]
+        ];
 
         // invoke_signed(
         //     &spl_token::instruction::close_account(
@@ -344,15 +351,17 @@ pub mod solcraft_breeding {
         //         ctx.accounts.token_program.to_account_info().clone(),
         //         ctx.accounts.stake_account.to_account_info().clone(),
         //         ctx.accounts.payer.to_account_info().clone(),
-        //         ctx.accounts.authority.clone(),
         //     ],
         //     &[&signers_seeds],
         // )?;
 
+        stake_account.reload()?;
+        ctx.accounts.destination.reload()?;
+
         anchor_spl::token::close_account(CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
             anchor_spl::token::CloseAccount {
-                account: stake_account.to_account_info(),
+                account: token.to_account_info(),
                 destination: payer.clone(),
                 authority: stake_account.to_account_info(),
             },
@@ -370,20 +379,17 @@ pub mod solcraft_breeding {
         msg!("now: {}", now);
         msg!("stake_end: {}", end);
         
-        let mint = &ctx.accounts.mint;
+        let mint = &ctx.accounts.mint.to_account_info();
         let token = &ctx.accounts.token.to_account_info();
         let authority = &ctx.accounts.authority.to_account_info();
         let token_program = &ctx.accounts.token_program.to_account_info();
         let destination = &ctx.accounts.destination.to_account_info();
         
-        let sd = &token.key.to_string()[0..=16];
-
-        msg!("bump seed is: {}", sd);
-        
         let stake_account = &mut ctx.accounts.stake_account;
         stake_account.end = end;
         stake_account.user = authority.key.clone();
         stake_account.token = token.key.clone();
+        stake_account.bump = *ctx.bumps.get("stake_account").unwrap();
 
         let account_infos = vec![
             token_program.clone(),

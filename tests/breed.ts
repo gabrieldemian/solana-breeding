@@ -24,9 +24,9 @@ describe('will breed 2 pigs', () => {
         MintLayout.span
       )
 
-    const mint = new PublicKey(
-      '95HB9nxTrMFuj32zeN77rNGyHBT4sRgn7LCX9P3yAiCT'
-    )
+    // const mint = new PublicKey(
+    //   '95HB9nxTrMFuj32zeN77rNGyHBT4sRgn7LCX9P3yAiCT'
+    // )
 
     // get the associated account
     // const token = await getTokenWallet(DEVNET_WALLET.publicKey, mint)
@@ -35,9 +35,9 @@ describe('will breed 2 pigs', () => {
 
     // console.log('token is', token.toBase58())
 
-    const metadata = await getMetadata(mint)
+    // const metadata = await getMetadata(mint)
 
-    console.log('meta', metadata.toBase58())
+    // console.log('meta', metadata.toBase58())
 
     const male = new PublicKey(
       'BodBeWwYx13aC4e2gnCKgYXj8yienvauqTx7zGpzKsxp'
@@ -48,6 +48,9 @@ describe('will breed 2 pigs', () => {
     )
 
     const newMint = Keypair.generate()
+
+    console.log('new mint: ', newMint.publicKey.toBase58())
+
     const newToken = await getTokenWallet(
       DEVNET_WALLET.publicKey,
       newMint.publicKey

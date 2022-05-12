@@ -12,7 +12,7 @@ import {
 describe('can stake a NFT', () => {
   it('can stake', async () => {
     const mint = new PublicKey(
-      'AHzttKoSjAyrPQLqFfh5sh1ws9XYYbp8AFmiZvEG1kXW'
+      'H24zjW47Gvf4pKJb39ZTFegSNxaxVFjGK86oihBJhfV1'
     )
     /* to whom the token will be given */
     const to = pigMachine
@@ -79,9 +79,9 @@ describe('can stake a NFT', () => {
 
     await tx.rpc()
 
-    // const stakeAccountData = await program.account.stakeAccount.fetch(
-    //   stakeAccount
-    // )
-    // console.log('stake data:', stakeAccountData)
+    const stakeAccountData = await program.account.stakeAccount.fetch(
+      stakeAccount
+    )
+    console.log('stake data:', stakeAccountData)
   })
 })

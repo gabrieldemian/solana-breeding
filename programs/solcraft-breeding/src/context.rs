@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use anchor_spl::token::Mint;
 use crate::state::*;
 use {
     metaplex_token_metadata,
@@ -84,18 +85,19 @@ pub struct InitializePigMachine<'info> {
 
 #[derive(Accounts)]
 pub struct Stake<'info> {
-    /// CHECK: This is not dangerous because we don't read or write from this account
-    pub mint: AccountInfo<'info>,
-
     #[account(
         init,
         seeds=[mint.to_account_info().key.to_string()[0..=16].as_bytes()],
         payer = authority,
         bump,
-        space = 8 + 4 + 32 + 32,
+        space = 8 + 4 + 32 + 32 + 1,
         constraint = stake_account.to_account_info().owner == program_id
     )]
     pub stake_account: Account<'info, StakeAccount>,
+
+    /// CHECK: This is not dangerous because we don't read or write from this account
+    #[account(constraint = token.mint == mint.key())]
+    pub mint: Account<'info, Mint>,
 
     #[account(
         mut,
@@ -130,14 +132,18 @@ pub struct Unstake<'info> {
         mut,
         seeds=[mint.to_account_info().key.to_string()[0..=16].as_bytes()],
         bump,
-        constraint = stake_account.to_account_info().owner == program_id
+        constraint = stake_account.to_account_info().owner == program_id,
     )]
     pub stake_account: Account<'info, StakeAccount>,
 
     /// CHECK: This is not dangerous because we don't read or write from this account
-    pub mint: AccountInfo<'info>,
+    pub mint: Account<'info, Mint>,
 
-    #[account(mut, constraint = token.owner == authority.key())]
+    #[account(
+        mut,
+        constraint = token.owner == authority.key(),
+        constraint = token.mint == mint.key(),
+    )]
     pub token: Account<'info, TokenAccount>,
 
     /// CHECK: This is not dangerous because we don't read or write from this account

@@ -49,6 +49,7 @@ pub struct StakeAccount {
     pub end: u32,
     pub user: Pubkey,
     pub token: Pubkey,
+    pub bump: u8,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, PartialEq)]

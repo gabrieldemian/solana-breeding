@@ -57,8 +57,6 @@ describe('will mint NFT', () => {
       rent: SYSVAR_RENT_PUBKEY
     }
 
-    console.log(MintLayout.span)
-
     // male: https://shvp32nylh2utlrud22pg45oo3hgp5kaumtkkiiqekqkqs6m.arweave.net/ker-96bhZ9U__muNB6083Ouds5n9UCjJqUhECKgqEvM
     // female: https://p5jmxhol43meg3f3lwjynvsf5xw4jka5ignq4feuw33rko4e.arweave.net/f1LLncvm2ENsu12T_htZF7e3E_qB_1Bmw4UlLb3FTuE
 

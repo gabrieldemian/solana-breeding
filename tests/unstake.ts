@@ -1,6 +1,7 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
 import { pigMachine } from '../constants'
+import idl from '../target/idl/solcraft_breeding.json'
 import {
   createAssociatedTokenAccountInstruction,
   getTokenWallet,
@@ -11,7 +12,7 @@ import {
 describe('can unstake a NFT', () => {
   it('can unstake', async () => {
     const mint = new PublicKey(
-      'DEVwZPgwTp83x7vws7uhJMWH6XsJ2JeTMGRGWeSSvjZd'
+      '8arK5NxyQwrNRfTiUVxYPyN2rX8SzuZu9FGJRDToKNHw'
     )
     const to = provider.wallet.publicKey
     /* token of the next owner */
@@ -19,15 +20,23 @@ describe('can unstake a NFT', () => {
     /* token of the current owner */
     const token = await getTokenWallet(pigMachine, mint)
 
+    const [stakeAccount] = await PublicKey.findProgramAddress(
+      [Buffer.from(mint.toString().slice(0, 17))],
+      new PublicKey(idl.metadata.address)
+    )
+
+    /* 4RGk1iswDK99pC2JPns2ByAmv8nKWd1UFt5tMiVfBcyd */
+    console.log('stakeAccount -> ', stakeAccount.toBase58())
     console.log('destination -> ', destination.toBase58())
     console.log('token -> ', token.toBase58())
 
     const accounts = {
-      payer: to,
       mint,
       token,
-      destination,
+      payer: to,
       pigMachine,
+      destination,
+      stakeAccount,
       authority: pigMachine,
       tokenProgram: TOKEN_PROGRAM_ID
     }

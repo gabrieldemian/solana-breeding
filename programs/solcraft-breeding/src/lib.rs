@@ -1,7 +1,7 @@
 use {
     crate::{
         error::ErrorCode,
-        state::{CandyMachineData, PigMachineData, StakeData}
+        state::{CandyMachineData, PigMachineData}
     },
     anchor_lang::prelude::*,
     context::*
@@ -289,13 +289,19 @@ pub mod solcraft_breeding {
 
     pub fn unstake(ctx: Context<Unstake>) -> Result<()> {
 
-        let _now = Clock::get().unwrap().unix_timestamp as u32;
+        let now = Clock::get().unwrap().unix_timestamp as u32;
         let mint = &ctx.accounts.mint;
         let token = &ctx.accounts.token.to_account_info();
         let authority = &ctx.accounts.authority.to_account_info();
         let pig_machine = &ctx.accounts.pig_machine;
         let token_program = &ctx.accounts.token_program.to_account_info();
         let destination = &ctx.accounts.destination.to_account_info();
+        let stake_account = &mut ctx.accounts.stake_account;
+        let payer = &ctx.accounts.payer.to_account_info();
+
+        if now < stake_account.end {
+            return Err(ErrorCode::StakeNotReady.into());
+        }
 
         let account_infos = vec![
             token_program.clone(),
@@ -311,39 +317,63 @@ pub mod solcraft_breeding {
             &[pig_machine.bump]
         ];
 
+        // invoke_signed(
+        //     &spl_token::instruction::transfer_checked(
+        //         &token_program.key(),
+        //         token.key, // token of the current owner
+        //         mint.key,
+        //         destination.key, // token (ATA) of the receiver
+        //         authority.key, // the current owner
+        //         &[authority.key],
+        //         1,
+        //         0
+        //     )?,
+        //     account_infos.as_slice(),
+        //     &[&signers_seeds],
+        // )?;
+
+         /* @todo: close stake account */
         invoke_signed(
-            &spl_token::instruction::transfer_checked(
+            &spl_token::instruction::close_account(
                 &token_program.key(),
-                token.key, // token of the current owner
-                mint.key,
-                destination.key, // token (ATA) of the receiver
-                authority.key, // the current owner
-                &[authority.key],
-                1,
-                0
+                &stake_account.key(),
+                &payer.key(),
+                authority.key,
+                &[]
             )?,
-            account_infos.as_slice(),
+            &[
+                ctx.accounts.stake_account.to_account_info().clone(),
+                ctx.accounts.payer.to_account_info().clone(),
+                ctx.accounts.authority.clone(),
+            ],
             &[&signers_seeds],
         )?;
 
         Ok(())
     }
 
-    pub fn stake(
-        ctx: Context<Stake>,
-        data: StakeData,
-    ) -> Result<()> {
+    pub fn stake(ctx: Context<Stake>) -> Result<()> {
 
         let now = Clock::get().unwrap().unix_timestamp as u32;
-        msg!("days to stake: {}", data.duration);
-        msg!("now timestamp: {}", now);
+        let end = now + (60 * 15);
 
+        msg!("now: {}", now);
+        msg!("stake_end: {}", end);
+        
         let mint = &ctx.accounts.mint;
         let token = &ctx.accounts.token.to_account_info();
         let authority = &ctx.accounts.authority.to_account_info();
-        // let _pig_machine = &ctx.accounts.pig_machine.to_account_info();
         let token_program = &ctx.accounts.token_program.to_account_info();
         let destination = &ctx.accounts.destination.to_account_info();
+        
+        let sd = &token.key.to_string()[0..=16];
+
+        msg!("bump seed is: {}", sd);
+        
+        let stake_account = &mut ctx.accounts.stake_account;
+        stake_account.end = end;
+        stake_account.user = authority.key.clone();
+        stake_account.token = token.key.clone();
 
         let account_infos = vec![
             token_program.clone(),

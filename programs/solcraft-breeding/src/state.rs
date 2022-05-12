@@ -42,10 +42,13 @@ pub struct PigMachineData {
     pub mythical: Vec<StakeItem>,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, PartialEq)]
-pub struct StakeData {
-    /// in days
-    pub duration: u32,
+#[account]
+#[derive(Default)]
+pub struct StakeAccount {
+    /// timestamp in seconds
+    pub end: u32,
+    pub user: Pubkey,
+    pub token: Pubkey,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, PartialEq)]

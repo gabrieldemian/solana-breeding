@@ -16,4 +16,7 @@ pub enum ErrorCode {
 
     #[msg("You do not own one of the NFTs sent")]
     NotOwnerOfNFT,
+
+    #[msg("You can't unstake before the due time")]
+    StakeNotReady,
 }

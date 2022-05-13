@@ -141,6 +141,14 @@ pub struct Unstake<'info> {
     )]
     pub pig_machine: Account<'info, PigMachine>,
 
+    #[account(
+        mut,
+        seeds=[b"stake_account", mint.key().as_ref(), stake_account.timestamp.to_le_bytes().as_ref()],
+        bump,
+        constraint = stake_account.to_account_info().owner == program_id,
+    )]
+    pub stake_account: Account<'info, StakeAccount>,
+
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub mint: Account<'info, Mint>,
 

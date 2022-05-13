@@ -28,13 +28,26 @@ describe('can unstake a NFT', () => {
         new PublicKey(idl.metadata.address)
       )
 
+    /* @todo: use the fetch filter to get the stake_account */
+    /* and then send it to the unstake instruction */
+    const stakeAccountData = await program.account.stakeAccount.all([
+      {
+        memcmp: {
+          offset: 8 + 4 + 32,
+          bytes: token.toBase58()
+        }
+      }
+    ])
+
+    // console.log('stake_account -> ', stakeAccountData)
+
     const accounts = {
       mint,
       token,
       payer: provider.wallet.publicKey,
       pigMachine,
       destination,
-      // stakeAccount,
+      stakeAccount: stakeAccountData[0].publicKey,
       tokenProgram: TOKEN_PROGRAM_ID,
       rent: SYSVAR_RENT_PUBKEY
     }
@@ -61,20 +74,14 @@ describe('can unstake a NFT', () => {
       ])
     }
 
-    /* @todo: use the fetch filter to get the stake_account */
-    /* and then send it to the unstake instruction */
-    // const stakeAccountData = await program.account.stakeAccount.fetch(
-    //   stakeAccount
+    // console.log('mint ->', mint.toBase58())
+    // // console.log('stakeAccount -> ', stakeAccount.toBase58())
+    // console.log('destination token -> ', destination.toBase58())
+    // console.log('token -> ', token.toBase58())
+    // console.log(
+    //   'does the destination has a token address for that NFT? ',
+    //   destinationHasToken
     // )
-
-    console.log('mint ->', mint.toBase58())
-    // console.log('stakeAccount -> ', stakeAccount.toBase58())
-    console.log('destination token -> ', destination.toBase58())
-    console.log('token -> ', token.toBase58())
-    console.log(
-      'does the destination has a token address for that NFT? ',
-      destinationHasToken
-    )
 
     await tx.rpc()
   })

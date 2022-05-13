@@ -292,7 +292,7 @@ pub mod solcraft_breeding {
         let _now = Clock::get().unwrap().unix_timestamp as u32;
         let mint = &ctx.accounts.mint.to_account_info();
         let token = &ctx.accounts.token.to_account_info();
-        // let _stake_account = &ctx.accounts.stake_account.to_account_info();
+        let stake_account = &ctx.accounts.stake_account;
         let payer = &ctx.accounts.payer.to_account_info();
         let token_program = &ctx.accounts.token_program.to_account_info();
         let destination = &ctx.accounts.destination.to_account_info();
@@ -300,6 +300,8 @@ pub mod solcraft_breeding {
         // if now < stake_account.end {
         //     return Err(ErrorCode::StakeNotReady.into());
         // }
+
+        msg!("stake will end in: {}", stake_account.end);
 
         let account_infos = vec![
             token_program.clone(),
@@ -342,25 +344,7 @@ pub mod solcraft_breeding {
             },
             &[&signers_seeds],
         ))?;
-
-        // ctx.accounts.destination.reload()?;
-
-        // let signers_seeds = [
-        //     b"stake_account",
-        //     mint_key.as_ref(),
-        //     &[ctx.accounts.stake_account.bump]
-        // ];
-
-        // anchor_spl::token::close_account(CpiContext::new_with_signer(
-        //     ctx.accounts.token_program.to_account_info(),
-        //     anchor_spl::token::CloseAccount {
-        //         account: stake_account.to_account_info(),
-        //         destination: payer.clone(),
-        //         authority: stake_account.to_account_info(),
-        //     },
-        //     &[&signers_seeds],
-        // ))?;
-
+    
         Ok(())
     }
 

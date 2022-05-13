@@ -1,29 +1,33 @@
+import { BN } from '@project-serum/anchor'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
 import { pigMachine } from '../constants'
 import idl from '../target/idl/solcraft_breeding.json'
-import {
-  createAssociatedTokenAccountInstruction,
-  getTokenWallet,
-  program,
-  provider
-} from '../utils'
+import { getTokenWallet, program, provider } from '../utils'
 
 describe('can stake a NFT', () => {
   it('can stake', async () => {
+    // eslint-disable-next-line radix
+    const timestamp = new BN(parseInt((Date.now() / 1000).toString()))
     const mint = new PublicKey(
-      'H24zjW47Gvf4pKJb39ZTFegSNxaxVFjGK86oihBJhfV1'
+      '8HcchCr2shSizW9Vfp1PgruPYxeE1KGgpTbUk5RXegnw'
     )
-    /* to whom the token will be given */
-    const to = pigMachine
-    /* token account of the pig PDA */
-    const destination = await getTokenWallet(to, mint)
-    /* token of the current owner */
+
     const token = await getTokenWallet(provider.wallet.publicKey, mint)
+
+    const [destination, destinationBump] =
+      await PublicKey.findProgramAddress(
+        [Buffer.from('stake_token'), mint.toBuffer()],
+        new PublicKey(idl.metadata.address)
+      )
 
     /* generating a PDA for the stake account */
     const [stakeAccount] = await PublicKey.findProgramAddress(
-      [Buffer.from(mint.toString().slice(0, 17))],
+      [
+        Buffer.from('stake_account'),
+        mint.toBuffer(),
+        timestamp.toBuffer('le', 8)
+      ],
       new PublicKey(idl.metadata.address)
     )
 
@@ -34,47 +38,19 @@ describe('can stake a NFT', () => {
       destination,
       stakeAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
-      authority: provider.wallet.publicKey
+      authority: provider.wallet.publicKey,
+      rent: SYSVAR_RENT_PUBKEY
     }
 
-    const destinationAccount =
-      await provider.connection.getParsedAccountInfo(destination)
+    const tx = program.methods
+      .stake(destinationBump, timestamp)
+      .accounts(accounts)
 
-    /* if the receiver has a token account, we create it */
-    /* if not, we just skip this step */
-    const destinationHasToken = !!destinationAccount.value
-
-    let tx = program.methods.stake().accounts(accounts)
-
-    let preInstructions = []
-
-    /* if the target doesn't have an associated token account */
-    /* first, we need to create one for him, and then transfer the token */
-    if (!destinationHasToken) {
-      preInstructions = [
-        ...preInstructions,
-        createAssociatedTokenAccountInstruction(
-          destination, // new associated account
-          provider.wallet.publicKey, // payer
-          to, // wallet address (to)
-          mint // mint address
-        )
-      ]
-    }
-
-    if (preInstructions.length > 0) {
-      tx = tx.preInstructions(preInstructions)
-    }
-
+    console.log('destinationBump bump ->', destinationBump)
     console.log('mint -> ', mint.toBase58())
     console.log('stakeAccount -> ', stakeAccount.toBase58())
     console.log('destination token -> ', destination.toBase58())
     console.log('token -> ', token.toBase58())
-    console.log('\n')
-    console.log(
-      'does the destination has a token address for that NFT? ',
-      destinationHasToken
-    )
     console.log('\n')
 
     await tx.rpc()

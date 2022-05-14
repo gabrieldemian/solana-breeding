@@ -290,25 +290,16 @@ pub mod solcraft_breeding {
     pub fn unstake(ctx: Context<Unstake>, bump: u8) -> Result<()> {
 
         let _now = Clock::get().unwrap().unix_timestamp as u32;
-        let mint = &ctx.accounts.mint.to_account_info();
         let token = &ctx.accounts.token.to_account_info();
         let stake_account = &ctx.accounts.stake_account;
         let payer = &ctx.accounts.payer.to_account_info();
-        let token_program = &ctx.accounts.token_program.to_account_info();
-        let destination = &ctx.accounts.destination.to_account_info();
+        let stake_token = &ctx.accounts.stake_token.to_account_info();
 
         // if now < stake_account.end {
         //     return Err(ErrorCode::StakeNotReady.into());
         // }
 
         msg!("stake will end in: {}", stake_account.end);
-
-        let account_infos = vec![
-            token_program.clone(),
-            mint.clone(),
-            token.clone(),
-            destination.clone(),
-        ];
 
         let mint_key = ctx.accounts.mint.key();
 
@@ -318,29 +309,28 @@ pub mod solcraft_breeding {
             &[bump]
         ];
 
-        invoke_signed(
-            &spl_token::instruction::transfer_checked(
-                &token_program.key(),
-                destination.key, // token of the current owner
-                mint.key,
-                token.key, // token (ATA) of the receiver
-                destination.key, // the current owner
-                &[],
-                1,
-                0
-            )?,
-            account_infos.as_slice(),
-            &[&signers_seeds]
+        /* transfer the token from the user token account to the program's */
+        anchor_spl::token::transfer(
+            CpiContext::new_with_signer(
+                ctx.accounts.token_program.to_account_info(),
+                anchor_spl::token::Transfer{
+                    from: stake_token.clone(), // from: token of the current owner
+                    to: token.clone(), // to: token of the program
+                    authority: stake_token.clone(), // the current authority, which is the user
+                },
+                &[&signers_seeds],
+            ),
+            1
         )?;
 
-        ctx.accounts.destination.reload()?;
+        ctx.accounts.stake_token.reload()?;
 
         anchor_spl::token::close_account(CpiContext::new_with_signer(
             ctx.accounts.token_program.to_account_info(),
             anchor_spl::token::CloseAccount {
-                account: destination.to_account_info(),
+                account: stake_token.to_account_info(),
                 destination: payer.clone(),
-                authority: destination.to_account_info(),
+                authority: stake_token.to_account_info(),
             },
             &[&signers_seeds],
         ))?;
@@ -356,26 +346,16 @@ pub mod solcraft_breeding {
         msg!("now: {}", now);
         msg!("stake_end: {}", end);
         
-        let mint = &ctx.accounts.mint.to_account_info();
         let token = &ctx.accounts.token.to_account_info();
         let authority = &ctx.accounts.authority.to_account_info();
-        let token_program = &ctx.accounts.token_program.to_account_info();
-        let destination = &ctx.accounts.destination.to_account_info();
-        
+        let stake_token = &ctx.accounts.stake_token.to_account_info();
         let stake_account = &mut ctx.accounts.stake_account;
+
         stake_account.end = end;
         stake_account.user = authority.key.clone();
         stake_account.token = token.key.clone();
         stake_account.bump = *ctx.bumps.get("stake_account").unwrap();
         stake_account.timestamp = timestamp;
-
-        let account_infos = vec![
-            token_program.clone(),
-            authority.clone(),
-            destination.clone(),
-            mint.clone(),
-            token.clone(),
-        ];
 
         let mint_key = ctx.accounts.mint.key();
 
@@ -385,32 +365,18 @@ pub mod solcraft_breeding {
             &[bump]
         ];
 
-        // anchor_spl::token::transfer(
-        //     CpiContext::new_with_signer(
-        //         ctx.accounts.token_program.to_account_info(),
-        //         anchor_spl::token::Transfer{
-        //             from: authority.clone(),
-        //             to: token.clone(),
-        //             authority: authority.clone(),
-        //         },
-        //         &[&signers_seeds],
-        //     ),
-        //     1
-        // )?;
-
-        invoke_signed(
-            &spl_token::instruction::transfer_checked(
-                &token_program.key(),
-                token.key, // token of the current owner
-                mint.key,
-                destination.key, // token (ATA) of the receiver
-                authority.key, // the current owner
-                &[authority.key],
-                1,
-                0
-            )?,
-            account_infos.as_slice(),
-            &[&signers_seeds]
+        /* transfer the token from the user token account to the program's */
+        anchor_spl::token::transfer(
+            CpiContext::new_with_signer(
+                ctx.accounts.token_program.to_account_info(),
+                anchor_spl::token::Transfer{
+                    from: token.clone(), // from: token of the current owner
+                    to: stake_token.clone(), // to: token of the program
+                    authority: authority.clone(), // the current authority, which is the user
+                },
+                &[&signers_seeds],
+            ),
+            1
         )?;
 
         Ok(())

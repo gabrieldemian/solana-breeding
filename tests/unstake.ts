@@ -1,5 +1,5 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
+import { PublicKey } from '@solana/web3.js'
 import { pigMachine } from '../constants'
 import idl from '../target/idl/solcraft_breeding.json'
 import {
@@ -11,25 +11,22 @@ import {
 
 describe('can unstake a NFT', () => {
   it('can unstake', async () => {
-    /* mint address */
-
-    // const timestamp = new BN(parseInt((Date.now() / 1000).toString()))
+    /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      '8HcchCr2shSizW9Vfp1PgruPYxeE1KGgpTbUk5RXegnw'
+      '7qzYTJPvikPJSH9uFiHTftXQKsc7CwHijGZx4JJtJFuK'
     )
 
-    /* token of the next owner, that will be the current user */
+    /* token account of the user */
     const token = await getTokenWallet(provider.wallet.publicKey, mint)
 
     /* account that holds our NFT, belongs to the contract */
-    const [destination, destinationBump] =
+    const [stakeToken, stakeTokenBump] =
       await PublicKey.findProgramAddress(
         [Buffer.from('stake_token'), mint.toBuffer()],
         new PublicKey(idl.metadata.address)
       )
 
-    /* @todo: use the fetch filter to get the stake_account */
-    /* and then send it to the unstake instruction */
+    /* get the user stake account using a filter, queried by the token */
     const stakeAccountData = await program.account.stakeAccount.all([
       {
         memcmp: {
@@ -46,27 +43,26 @@ describe('can unstake a NFT', () => {
       token,
       payer: provider.wallet.publicKey,
       pigMachine,
-      destination,
+      stakeToken,
       stakeAccount: stakeAccountData[0].publicKey,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      rent: SYSVAR_RENT_PUBKEY
+      tokenProgram: TOKEN_PROGRAM_ID
     }
 
-    const destinationAccount =
-      await provider.connection.getParsedAccountInfo(destination)
+    const stakeTokenAccount =
+      await provider.connection.getParsedAccountInfo(stakeToken)
 
     /* if the receiver has a token account, we create it */
     /* if not, we just skip this step */
-    const destinationHasToken = !!destinationAccount.value
+    const stakeTokenHasToken = !!stakeTokenAccount.value
 
-    let tx = program.methods.unstake(destinationBump).accounts(accounts)
+    let tx = program.methods.unstake(stakeTokenBump).accounts(accounts)
 
     /* if the target doesn't have an associated token account */
     /* first, we need to create one for him, and then transfer the token */
-    if (!destinationHasToken) {
+    if (!stakeTokenHasToken) {
       tx = tx.preInstructions([
         createAssociatedTokenAccountInstruction(
-          destination, // new associated account
+          stakeToken, // new associated account
           provider.wallet.publicKey, // payer
           provider.wallet.publicKey, // wallet address (to)
           mint // mint address
@@ -74,14 +70,14 @@ describe('can unstake a NFT', () => {
       ])
     }
 
-    // console.log('mint ->', mint.toBase58())
-    // // console.log('stakeAccount -> ', stakeAccount.toBase58())
-    // console.log('destination token -> ', destination.toBase58())
-    // console.log('token -> ', token.toBase58())
-    // console.log(
-    //   'does the destination has a token address for that NFT? ',
-    //   destinationHasToken
-    // )
+    console.log('mint ->', mint.toBase58())
+    // console.log('stakeAccount -> ', stakeAccount.toBase58())
+    console.log('stakeToken token -> ', stakeToken.toBase58())
+    console.log('token -> ', token.toBase58())
+    console.log(
+      'does the stakeToken has a token address for that NFT? ',
+      stakeTokenHasToken
+    )
 
     await tx.rpc()
   })

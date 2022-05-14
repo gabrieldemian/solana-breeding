@@ -110,7 +110,9 @@ pub struct Stake<'info> {
     #[account(
         mut,
         associated_token::mint = mint,
-        associated_token::authority = authority
+        associated_token::authority = authority,
+        constraint = token.owner == authority.key(),
+        constraint = token.mint == mint.key(),
     )]
     pub token: Account<'info, TokenAccount>,
 
@@ -124,9 +126,9 @@ pub struct Stake<'info> {
         seeds = [b"stake_token", mint.key().as_ref()],
         bump,
         token::mint = mint,
-        token::authority = destination,
+        token::authority = stake_token,
     )]
-    pub destination: Account<'info, TokenAccount>,
+    pub stake_token: Account<'info, TokenAccount>,
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
 }
@@ -165,9 +167,9 @@ pub struct Unstake<'info> {
         seeds = [b"stake_token", mint.key().as_ref()],
         bump,
         token::mint = mint,
-        token::authority = destination,
+        token::authority = stake_token,
     )]
-    pub destination: Account<'info, TokenAccount>,
+    pub stake_token: Account<'info, TokenAccount>,
 
     // fee payer
     #[account(mut)]

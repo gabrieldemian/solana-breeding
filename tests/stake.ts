@@ -9,13 +9,15 @@ describe('can stake a NFT', () => {
   it('can stake', async () => {
     // eslint-disable-next-line radix
     const timestamp = new BN(parseInt((Date.now() / 1000).toString()))
+    /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      '8HcchCr2shSizW9Vfp1PgruPYxeE1KGgpTbUk5RXegnw'
+      '7qzYTJPvikPJSH9uFiHTftXQKsc7CwHijGZx4JJtJFuK'
     )
 
+    /* token account of the user */
     const token = await getTokenWallet(provider.wallet.publicKey, mint)
 
-    const [destination, destinationBump] =
+    const [stakeToken, stakeTokenBump] =
       await PublicKey.findProgramAddress(
         [Buffer.from('stake_token'), mint.toBuffer()],
         new PublicKey(idl.metadata.address)
@@ -35,7 +37,7 @@ describe('can stake a NFT', () => {
       mint,
       token,
       pigMachine,
-      destination,
+      stakeToken,
       stakeAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
       authority: provider.wallet.publicKey,
@@ -43,13 +45,13 @@ describe('can stake a NFT', () => {
     }
 
     const tx = program.methods
-      .stake(destinationBump, timestamp)
+      .stake(stakeTokenBump, timestamp)
       .accounts(accounts)
 
-    console.log('destinationBump bump ->', destinationBump)
+    console.log('stakeTokenBump bump ->', stakeTokenBump)
     console.log('mint -> ', mint.toBase58())
     console.log('stakeAccount -> ', stakeAccount.toBase58())
-    console.log('destination token -> ', destination.toBase58())
+    console.log('stakeToken token -> ', stakeToken.toBase58())
     console.log('token -> ', token.toBase58())
     console.log('\n')
 

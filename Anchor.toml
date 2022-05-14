@@ -12,10 +12,7 @@ cluster = "devnet"
 wallet = "~/.config/solana/devnet.json"
 
 [scripts]
-test_mint = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/mintNFT.ts"
-test_init_candy_machine = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/initializeCandyMachine.ts"
 test_init_pig_machine = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/initializePigMachine.ts"
-test_update_candy_machine = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/updateCandyMachine.ts"
 test_breed = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/breed.ts"
 test_stake = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/stake.ts"
 test_unstake = "npx ts-mocha -p ./tsconfig.json -t 1000000 tests/unstake.ts"

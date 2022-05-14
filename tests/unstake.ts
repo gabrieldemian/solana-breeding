@@ -13,7 +13,7 @@ describe('can unstake a NFT', () => {
   it('can unstake', async () => {
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      '7qzYTJPvikPJSH9uFiHTftXQKsc7CwHijGZx4JJtJFuK'
+      'G9M6ZotYsGcDJFjL2JX3raM2hwFYYAJ4VDaS7QZ19rQ8'
     )
 
     /* token account of the user */

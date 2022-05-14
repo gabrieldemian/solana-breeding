@@ -11,7 +11,7 @@ describe('can stake a NFT', () => {
     const timestamp = new BN(parseInt((Date.now() / 1000).toString()))
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      '7qzYTJPvikPJSH9uFiHTftXQKsc7CwHijGZx4JJtJFuK'
+      'G9M6ZotYsGcDJFjL2JX3raM2hwFYYAJ4VDaS7QZ19rQ8'
     )
 
     /* token account of the user */

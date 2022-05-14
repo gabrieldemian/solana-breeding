@@ -10,14 +10,6 @@ pub struct Creator {
 
 #[account]
 #[derive(Default)]
-pub struct CandyMachine {
-    pub authority: Pubkey,
-    pub bump: u8,
-    pub data: CandyMachineData,
-}
-
-#[account]
-#[derive(Default)]
 pub struct PigMachine {
     pub authority: Pubkey,
     pub bump: u8,
@@ -53,18 +45,6 @@ pub struct StakeAccount {
     pub timestamp: u64,
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, PartialEq)]
-pub struct CandyMachineData {
-    pub price: u64,
-    pub nfts_minted: u64,
-    pub go_live_date: Option<i64>,
-    pub creators: Vec<Creator>,
-    pub symbol: String,
-    pub seller_fee_basis_points: u16,
-    pub max_supply: Option<u64>,
-}
-
 /* seeds of the PDA, can be anything you want */
 /* remember to change them on the JS too (utils.ts file) */
-pub static PREFIX_CANDY: &str = "solcraft_breeding";
 pub static PREFIX_PIG: &str = "solcraft_pigmachine";

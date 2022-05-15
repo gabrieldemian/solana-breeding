@@ -1,5 +1,5 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { PublicKey } from '@solana/web3.js'
+import { PublicKey, SystemProgram } from '@solana/web3.js'
 import { pigMachine } from '../constants'
 import idl from '../target/idl/solcraft_breeding.json'
 import {
@@ -13,7 +13,7 @@ describe('can unstake a NFT', () => {
   it('can unstake', async () => {
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      'G9M6ZotYsGcDJFjL2JX3raM2hwFYYAJ4VDaS7QZ19rQ8'
+      '9oRzqGfGuP4kqP3qyy3iSu6txyc5comgYyzvnoztRaX1'
     )
 
     /* token account of the user */
@@ -45,7 +45,8 @@ describe('can unstake a NFT', () => {
       pigMachine,
       stakeToken,
       stakeAccount: stakeAccountData[0].publicKey,
-      tokenProgram: TOKEN_PROGRAM_ID
+      tokenProgram: TOKEN_PROGRAM_ID,
+      systemProgram: SystemProgram.programId
     }
 
     const stakeTokenAccount =

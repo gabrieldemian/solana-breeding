@@ -44,4 +44,5 @@ pub struct Unstake<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     pub rent: Sysvar<'info, Rent>,
+    pub system_program: Program<'info, System>,
 }

@@ -16,8 +16,8 @@ pub mod solcraft_breeding {
         instructions::breed::handler(ctx)
     }
 
-    pub fn stake(ctx: Context<Stake>, bump: u8, timestamp: u64) -> Result<()> {
-        instructions::stake::handler(ctx, bump, timestamp)
+    pub fn stake(ctx: Context<Stake>, bump: u8) -> Result<()> {
+        instructions::stake::handler(ctx, bump)
     }
 
     pub fn unstake(ctx: Context<Unstake>, bump: u8) -> Result<()> {

@@ -14,7 +14,7 @@ pub struct Unstake<'info> {
 
     #[account(
         mut,
-        seeds=[b"stake_account", mint.key().as_ref(), stake_account.timestamp.to_le_bytes().as_ref()],
+        seeds=[b"stake_account", mint.key().as_ref()],
         bump,
         constraint = stake_account.to_account_info().owner == program_id,
     )]

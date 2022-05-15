@@ -3,14 +3,14 @@ use anchor_spl::token::{Mint, TokenAccount, Token};
 use crate::state::{StakeAccount, PREFIX_PIG, PigMachine};
 
 #[derive(Accounts)]
-#[instruction(bump: u8, timestamp: u64)]
+#[instruction(bump: u8)]
 pub struct Stake<'info> {
     #[account(
         init,
-        seeds=[b"stake_account", mint.key().as_ref(), timestamp.to_le_bytes().as_ref()],
+        seeds=[b"stake_account", mint.key().as_ref()],
         payer = authority,
         bump,
-        space = 8 + 4 + 32 + 32 + 1 + 8,
+        space = 8 + 4 + 32 + 32 + 1,
         constraint = stake_account.to_account_info().owner == program_id
     )]
     pub stake_account: Account<'info, StakeAccount>,

@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use super::Stake;
 
-pub fn handler(ctx: Context<Stake>, bump: u8, timestamp: u64) -> Result<()> {
+pub fn handler(ctx: Context<Stake>, bump: u8) -> Result<()> {
 
   let now = Clock::get().unwrap().unix_timestamp as u32;
   let end = now + (60 * 15);
@@ -18,7 +18,6 @@ pub fn handler(ctx: Context<Stake>, bump: u8, timestamp: u64) -> Result<()> {
   stake_account.user = authority.key.clone();
   stake_account.token = token.key.clone();
   stake_account.bump = *ctx.bumps.get("stake_account").unwrap();
-  stake_account.timestamp = timestamp;
 
   let mint_key = ctx.accounts.mint.key();
 

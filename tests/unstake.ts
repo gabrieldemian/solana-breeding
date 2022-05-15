@@ -26,15 +26,11 @@ describe('can unstake a NFT', () => {
         new PublicKey(idl.metadata.address)
       )
 
-    /* get the user stake account using a filter, queried by the token */
-    const stakeAccountData = await program.account.stakeAccount.all([
-      {
-        memcmp: {
-          offset: 8 + 4 + 32,
-          bytes: token.toBase58()
-        }
-      }
-    ])
+    /* generating a PDA for the stake account */
+    const [stakeAccount] = await PublicKey.findProgramAddress(
+      [Buffer.from('stake_account'), mint.toBuffer()],
+      new PublicKey(idl.metadata.address)
+    )
 
     // console.log('stake_account -> ', stakeAccountData)
 
@@ -44,7 +40,7 @@ describe('can unstake a NFT', () => {
       payer: provider.wallet.publicKey,
       pigMachine,
       stakeToken,
-      stakeAccount: stakeAccountData[0].publicKey,
+      stakeAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: SystemProgram.programId
     }

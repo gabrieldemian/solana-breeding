@@ -1,4 +1,3 @@
-import { BN } from '@project-serum/anchor'
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
 import { pigMachine } from '../constants'
@@ -7,8 +6,6 @@ import { getTokenWallet, program, provider } from '../utils'
 
 describe('can stake a NFT', () => {
   it('can stake', async () => {
-    // eslint-disable-next-line radix
-    const timestamp = new BN(parseInt((Date.now() / 1000).toString()))
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
       '9oRzqGfGuP4kqP3qyy3iSu6txyc5comgYyzvnoztRaX1'
@@ -25,11 +22,7 @@ describe('can stake a NFT', () => {
 
     /* generating a PDA for the stake account */
     const [stakeAccount] = await PublicKey.findProgramAddress(
-      [
-        Buffer.from('stake_account'),
-        mint.toBuffer(),
-        timestamp.toBuffer('le', 8)
-      ],
+      [Buffer.from('stake_account'), mint.toBuffer()],
       new PublicKey(idl.metadata.address)
     )
 
@@ -44,9 +37,7 @@ describe('can stake a NFT', () => {
       rent: SYSVAR_RENT_PUBKEY
     }
 
-    const tx = program.methods
-      .stake(stakeTokenBump, timestamp)
-      .accounts(accounts)
+    const tx = program.methods.stake(stakeTokenBump).accounts(accounts)
 
     console.log('stakeTokenBump bump ->', stakeTokenBump)
     console.log('mint -> ', mint.toBase58())

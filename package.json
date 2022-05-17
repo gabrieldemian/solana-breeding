@@ -12,6 +12,7 @@
     "build-types": "tsc --noEmit --pretty",
     "test-pig-machine": "anchor run test_init_pig_machine",
     "test-initialize-runes": "anchor run test_init_runes",
+    "test-mint-tokens": "anchor run test_mint_tokens",
     "test-breed": "anchor run test_breed",
     "test-stake": "anchor run test_stake",
     "test-unstake": "anchor run test_unstake",

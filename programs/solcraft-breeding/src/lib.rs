@@ -27,6 +27,10 @@ pub mod solcraft_breeding {
     pub fn initialize_runes(ctx: Context<InitializeRunes>, bump: u8, rune: String) -> Result<()> {
         instructions::initialize_runes::handler(ctx, bump, rune)
     }
+
+    pub fn mint_tokens(ctx: Context<MintTokens>, bump: u8, seed: String, quantity: u64) -> Result<()> {
+        instructions::mint_tokens::handler(ctx, bump, seed, quantity)
+    }
 }
 
 /* RENT TABLE */

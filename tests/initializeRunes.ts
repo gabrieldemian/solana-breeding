@@ -29,7 +29,7 @@ describe('starting initialize init runes', () => {
       tokenProgram: TOKEN_PROGRAM_ID,
       pigMachine,
       // token,
-      // mint: mint.publicKey,
+      mint: mint.publicKey,
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId
     } as Accounts<IdlAccountItem>
@@ -37,7 +37,7 @@ describe('starting initialize init runes', () => {
     await program.methods
       .initializeRunes()
       .accounts(accounts)
-      // .signers([mint])
+      .signers([mint])
       // .preInstructions([
       //   SystemProgram.createAccount({
       //     fromPubkey: provider.wallet.publicKey,

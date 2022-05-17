@@ -18,8 +18,14 @@ pub struct InitializeRunes<'info> {
     pub payer: Signer<'info>,
 
     // #[account(mut)]
-    // /// CHECK: account checked in CPI
-    // pub mint: Account<'info, Mint>,
+    #[account(
+        init,
+        payer = payer,
+        mint::decimals = 9,
+        mint::authority = payer,
+    )]
+    /// CHECK: account checked in CPI
+    pub mint: Account<'info, Mint>,
     
     pub rent: Sysvar<'info, Rent>,
     pub token_program: Program<'info, Token>,

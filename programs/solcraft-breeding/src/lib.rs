@@ -23,6 +23,10 @@ pub mod solcraft_breeding {
     pub fn unstake(ctx: Context<Unstake>, bump: u8) -> Result<()> {
         instructions::unstake::handler(ctx, bump)
     }
+
+    pub fn initialize_runes(ctx: Context<InitializeRunes>) -> Result<()> {
+        instructions::initialize_runes::handler(ctx)
+    }
 }
 
 /* RENT TABLE */

@@ -81,7 +81,7 @@
     ".tabs-container": "overflow: visible !important;",
     ".tabs-and-actions-container > .monaco-scrollable-element": "overflow: visible !important;",
     ".tabs-and-actions-container": "overflow: visible !important;",
-    ".tab": "padding: 0px 80px !important;", // border: solid 1px black,", // border-left: solid 2px #4E545E;",
+    ".tab": "padding: 0px 30px !important;", // border: solid 1px black,", // border-left: solid 2px #4E545E;",
     ".tab:focus-within": "border-left: solid 2px #4886F2;",
     ".tab.active": "border-left: solid 2px #4886F2; border-bottom: solid 1px #272C34; position: relative !important; top: 1px !important; overflow: visible !important;",
     ".tab:hover .tab-actions": "transform: scale(1);",

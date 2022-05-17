@@ -66,6 +66,9 @@ describe('will breed 2 pigs', () => {
     //   )
     // console.log('owner ', largestAccountInfo.value.data)
 
+    console.log('space: ', MintLayout.span)
+    console.log('lamports: ', rent)
+
     const accounts = {
       authority: DEVNET_WALLET.publicKey,
       tokenProgram: TOKEN_PROGRAM_ID,

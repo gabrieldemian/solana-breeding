@@ -3,15 +3,19 @@ use crate::state::PREFIX_PIG;
 
 use super::MintTokens;
 
-pub fn handler(ctx: Context<MintTokens>, _bump: u8, _seed: String, quantity: u64) -> Result<()> {
+pub fn handler(ctx: Context<MintTokens>, _bump_token: u8, bump_mint: u8, seed: String, quantity: u64) -> Result<()> {
   let mint = &ctx.accounts.mint.to_account_info();
   let token = &ctx.accounts.token.to_account_info();
   let pig_machine = &ctx.accounts.pig_machine;
-  let _payer = &ctx.accounts.payer.to_account_info();
 
-  let signers_seeds = [
+  let signers_seeds_pig = [
       PREFIX_PIG.as_bytes(),
       &[pig_machine.bump]
+  ];
+
+  let signers_seeds_mint = [
+      seed.as_bytes(),
+      &[bump_mint]
   ];
 
   anchor_spl::token::mint_to(
@@ -22,7 +26,7 @@ pub fn handler(ctx: Context<MintTokens>, _bump: u8, _seed: String, quantity: u64
             to: token.clone(),
             authority: pig_machine.to_account_info().clone()
         },
-        &[&signers_seeds],
+        &[&signers_seeds_pig, &signers_seeds_mint],
     ),
     1000000000 * quantity
   )?;

@@ -5,7 +5,7 @@ use crate::state::{PREFIX_PIG, PigMachine};
 use crate::error::ErrorCode;
 
 #[derive(Accounts)]
-#[instruction(bump: u8, seed: String, quantity: u64)]
+#[instruction(bump_token: u8, bump_mint: u8, seed: String, quantity: u64)]
 pub struct MintTokens<'info> {
     #[account(
         seeds=[PREFIX_PIG.as_bytes()],
@@ -15,7 +15,6 @@ pub struct MintTokens<'info> {
     pub pig_machine: Account<'info, PigMachine>,
     
     #[account(
-        mut,
         constraint = 
             payer.key().to_string()
             ==
@@ -26,6 +25,8 @@ pub struct MintTokens<'info> {
 
     #[account(
         mut,
+        seeds = [seed.as_bytes()],
+        bump = bump_mint,
         mint::authority = pig_machine,
         mint::decimals = 9,
     )]
@@ -33,8 +34,8 @@ pub struct MintTokens<'info> {
 
     #[account(
         mut,
-        seeds = [seed.as_ref()],
-        bump = bump,
+        seeds = [mint.key().as_ref()],
+        bump = bump_token,
         token::mint = mint,
         token::authority = pig_machine,
     )]

@@ -5,7 +5,7 @@ use crate::state::{PREFIX_PIG, PigMachine};
 use crate::error::ErrorCode;
 
 #[derive(Accounts)]
-#[instruction(bump: u8, rune: String)]
+#[instruction(bump_token: u8, bump_mint: u8, seed: String)]
 pub struct InitializeRunes<'info> {
     #[account(
         seeds=[PREFIX_PIG.as_bytes()],
@@ -27,6 +27,8 @@ pub struct InitializeRunes<'info> {
     #[account(
         init,
         payer = payer,
+        seeds = [seed.as_bytes()],
+        bump,
         mint::decimals = 9,
         mint::authority = pig_machine,
     )]
@@ -35,7 +37,7 @@ pub struct InitializeRunes<'info> {
     #[account(
         init,
         payer = payer,
-        seeds = [rune.as_ref()],
+        seeds = [mint.key().as_ref()],
         bump,
         token::mint = mint,
         token::authority = pig_machine,

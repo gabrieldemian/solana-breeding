@@ -1,6 +1,5 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
-  Keypair,
   PublicKey,
   SystemProgram,
   SYSVAR_RENT_PUBKEY
@@ -9,15 +8,19 @@ import idl from '../target/idl/solcraft_breeding.json'
 import { program, provider } from '../utils'
 import { pigMachine } from '../constants'
 
-const runes = ['ice', 'fire', 'sand', 'earth']
+const runes = ['ice_rune', 'fire_rune', 'sand_rune', 'earth_rune']
 
 describe('starting initialize init runes', () => {
   it('can initialize init runes', async () => {
-    const mint = Keypair.generate()
+    /* token account of the game itself */
+    const [mint, mintBump] = await PublicKey.findProgramAddress(
+      [Buffer.from(runes[3])],
+      new PublicKey(idl.metadata.address)
+    )
 
     /* token account of the game itself */
     const [token, tokenBump] = await PublicKey.findProgramAddress(
-      [Buffer.from(runes[3])],
+      [mint.toBuffer()],
       new PublicKey(idl.metadata.address)
     )
 
@@ -26,18 +29,17 @@ describe('starting initialize init runes', () => {
       tokenProgram: TOKEN_PROGRAM_ID,
       pigMachine,
       token,
-      mint: mint.publicKey,
+      mint,
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId
     }
 
     await program.methods
-      .initializeRunes(tokenBump, runes[3])
+      .initializeRunes(tokenBump, mintBump, runes[3])
       .accounts(accounts)
-      .signers([mint])
       .rpc()
 
-    console.log('mint ->', mint.publicKey.toBase58())
+    console.log('mint ->', mint.toBase58())
     console.log('token ->', token.toBase58())
   })
 })

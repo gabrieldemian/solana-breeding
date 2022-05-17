@@ -19,4 +19,7 @@ pub enum ErrorCode {
 
     #[msg("You can't unstake before the due time")]
     StakeNotReady,
+
+    #[msg("You are not allowed to do this!")]
+    RespectMyAuthority,
 }

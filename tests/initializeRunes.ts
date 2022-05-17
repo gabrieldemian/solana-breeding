@@ -16,14 +16,12 @@ const runes = ['ice', 'fire', 'sand', 'earth']
 describe('starting initialize init runes', () => {
   it('can initialize init runes', async () => {
     const mint = Keypair.generate()
+
+    /* token account of the game itself */
     const [token, tokenBump] = await PublicKey.findProgramAddress(
-      [Buffer.from(runes[0]), mint.publicKey.toBuffer()],
+      [Buffer.from(runes[3])],
       new PublicKey(idl.metadata.address)
     )
-    // const token = await getTokenWallet(
-    //   provider.wallet.publicKey,
-    //   mint.publicKey
-    // )
 
     const accounts = {
       payer: provider.wallet.publicKey,
@@ -36,18 +34,12 @@ describe('starting initialize init runes', () => {
     } as Accounts<IdlAccountItem>
 
     await program.methods
-      .initializeRunes(tokenBump, runes[0])
+      .initializeRunes(tokenBump, runes[3])
       .accounts(accounts)
       .signers([mint])
-      // .preInstructions([
-      //   SystemProgram.createAccount({
-      //     fromPubkey: provider.wallet.publicKey,
-      //     newAccountPubkey: mint.publicKey,
-      //     space: MintLayout.span,
-      //     lamports: rent,
-      //     programId: TOKEN_PROGRAM_ID
-      //   })
-      // ])
       .rpc()
+
+    console.log('mint ->', mint.publicKey.toBase58())
+    console.log('token ->', token.toBase58())
   })
 })

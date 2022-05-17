@@ -1,6 +1,6 @@
 import { Accounts } from '@project-serum/anchor'
 import { IdlAccountItem } from '@project-serum/anchor/dist/cjs/idl'
-import { MintLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
   Keypair,
   PublicKey,
@@ -8,17 +8,18 @@ import {
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js'
 import idl from '../target/idl/solcraft_breeding.json'
-import { getTokenWallet, program, provider } from '../utils'
+import { program, provider } from '../utils'
 import { pigMachine } from '../constants'
+
+const runes = ['ice', 'fire', 'sand', 'earth']
 
 describe('starting initialize init runes', () => {
   it('can initialize init runes', async () => {
-    const rent =
-      await provider.connection.getMinimumBalanceForRentExemption(
-        MintLayout.span
-      )
-
     const mint = Keypair.generate()
+    const [token, tokenBump] = await PublicKey.findProgramAddress(
+      [Buffer.from(runes[0]), mint.publicKey.toBuffer()],
+      new PublicKey(idl.metadata.address)
+    )
     // const token = await getTokenWallet(
     //   provider.wallet.publicKey,
     //   mint.publicKey
@@ -28,14 +29,14 @@ describe('starting initialize init runes', () => {
       payer: provider.wallet.publicKey,
       tokenProgram: TOKEN_PROGRAM_ID,
       pigMachine,
-      // token,
+      token,
       mint: mint.publicKey,
       rent: SYSVAR_RENT_PUBKEY,
       systemProgram: SystemProgram.programId
     } as Accounts<IdlAccountItem>
 
     await program.methods
-      .initializeRunes()
+      .initializeRunes(tokenBump, runes[0])
       .accounts(accounts)
       .signers([mint])
       // .preInstructions([

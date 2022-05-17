@@ -24,8 +24,8 @@ pub mod solcraft_breeding {
         instructions::unstake::handler(ctx, bump)
     }
 
-    pub fn initialize_runes(ctx: Context<InitializeRunes>) -> Result<()> {
-        instructions::initialize_runes::handler(ctx)
+    pub fn initialize_runes(ctx: Context<InitializeRunes>, bump: u8, rune: String) -> Result<()> {
+        instructions::initialize_runes::handler(ctx, bump, rune)
     }
 }
 

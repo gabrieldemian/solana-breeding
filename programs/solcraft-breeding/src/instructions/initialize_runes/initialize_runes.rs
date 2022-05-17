@@ -4,7 +4,7 @@ use crate::state::PREFIX_PIG;
 
 use super::InitializeRunes;
 
-pub fn handler(ctx: Context<InitializeRunes>) -> Result<()> {
+pub fn handler(ctx: Context<InitializeRunes>, _bump: u8, _rune: String) -> Result<()> {
   // let _mint = &ctx.accounts.mint;
   let pig_machine = &ctx.accounts.pig_machine;
   let _payer = &ctx.accounts.payer;

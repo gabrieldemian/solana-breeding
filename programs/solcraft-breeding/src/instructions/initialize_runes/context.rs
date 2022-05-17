@@ -4,6 +4,7 @@ use anchor_spl::{token::{Token, TokenAccount, Mint}, associated_token::Associate
 use crate::state::{PREFIX_PIG, PigMachine};
 
 #[derive(Accounts)]
+#[instruction(bump: u8, rune: String)]
 pub struct InitializeRunes<'info> {
     #[account(
         mut,
@@ -17,7 +18,6 @@ pub struct InitializeRunes<'info> {
     /// CHECK: account checked in CPI
     pub payer: Signer<'info>,
 
-    // #[account(mut)]
     #[account(
         init,
         payer = payer,
@@ -26,6 +26,16 @@ pub struct InitializeRunes<'info> {
     )]
     /// CHECK: account checked in CPI
     pub mint: Account<'info, Mint>,
+
+    #[account(
+        init,
+        payer = payer,
+        seeds = [rune.as_ref(), mint.key().as_ref()],
+        bump,
+        token::mint = mint,
+        token::authority = payer,
+    )]
+    pub token: Account<'info, TokenAccount>,
     
     pub rent: Sysvar<'info, Rent>,
     pub token_program: Program<'info, Token>,

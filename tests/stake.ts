@@ -8,7 +8,7 @@ describe('can stake a NFT', () => {
   it('can stake', async () => {
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      '9oRzqGfGuP4kqP3qyy3iSu6txyc5comgYyzvnoztRaX1'
+      'EJTitf2AWGMB5xJLneRtsvGEEwYhUKuzJZDksupk1i1T'
     )
 
     /* token account of the user */

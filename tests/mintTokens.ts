@@ -12,7 +12,7 @@ describe('starting initialize mint tokens', () => {
     /* how many toksn to mint, in decimals */
     const quantity = 400
 
-    /* token account of the game itself */
+    /* mint account of the game itself */
     const [mint, mintBump] = await PublicKey.findProgramAddress(
       [Buffer.from(runes[0])],
       new PublicKey(idl.metadata.address)

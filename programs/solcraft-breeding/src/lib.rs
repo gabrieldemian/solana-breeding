@@ -20,8 +20,8 @@ pub mod solcraft_breeding {
         instructions::stake::handler(ctx, bump)
     }
 
-    pub fn unstake(ctx: Context<Unstake>, bump: u8) -> Result<()> {
-        instructions::unstake::handler(ctx, bump)
+    pub fn unstake(ctx: Context<Unstake>, stake_token_bump: u8, mint_element_bump: u8, seed: String) -> Result<()> {
+        instructions::unstake::handler(ctx, stake_token_bump, mint_element_bump, seed)
     }
 
     pub fn initialize_runes(ctx: Context<InitializeRunes>, bump_token: u8, bump_mint: u8, seed: String) -> Result<()> {

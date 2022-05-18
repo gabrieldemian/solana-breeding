@@ -3,6 +3,7 @@ use anchor_spl::token::{Mint, TokenAccount, Token};
 use crate::state::{StakeAccount, PREFIX_PIG, PigMachine};
 
 #[derive(Accounts)]
+#[instruction(stake_token_bump: u8, mint_element_bump: u8, seed: String)]
 pub struct Unstake<'info> {
     #[account(
         mut,
@@ -28,7 +29,24 @@ pub struct Unstake<'info> {
         associated_token::mint = mint,
         associated_token::authority = payer
     )]
-    pub token: Account<'info, TokenAccount>,
+    pub user_token: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        token::authority = payer,
+        token::mint = mint_element
+    )]
+    pub token_element: Box<Account<'info, TokenAccount>>,
+
+    #[account(
+        mut,
+        seeds = [seed.as_bytes()],
+        bump = mint_element_bump,
+        mint::authority = pig_machine,
+        mint::decimals = 9,
+    )]
+    pub mint_element: Account<'info, Mint>,
+    
     pub token_program: Program<'info, Token>,
 
     #[account(
@@ -44,5 +62,4 @@ pub struct Unstake<'info> {
     #[account(mut)]
     pub payer: Signer<'info>,
     pub rent: Sysvar<'info, Rent>,
-    pub system_program: Program<'info, System>,
 }

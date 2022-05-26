@@ -57,22 +57,11 @@ pub fn handler(
     ))?;
 
     let stake_account_balance = stake_account.to_account_info().try_lamports()?;
-
-    /* send the SOL to the payer and erase the data of stake_account */
-    **stake_account.to_account_info().try_borrow_mut_lamports()? -= stake_account_balance;
-    **payer.to_account_info().try_borrow_mut_lamports()? += stake_account_balance;
-    stake_account
-        .to_account_info()
-        .try_borrow_mut_data()?
-        .fill(0);
-
     let random_number = utils::rng(&now, &"unstake-x4s56d7f".to_string(), &payer.key());
+    let signers_seeds_pig = [PREFIX_PIG.as_bytes(), &[pig_machine.bump]];
+    let signers_seeds_mint = [seed.as_bytes(), &[mint_element_bump]];
 
     msg!("my random number is: {}", random_number);
-
-    let signers_seeds_pig = [PREFIX_PIG.as_bytes(), &[pig_machine.bump]];
-
-    let signers_seeds_mint = [seed.as_bytes(), &[mint_element_bump]];
 
     anchor_spl::token::mint_to(
         CpiContext::new_with_signer(
@@ -87,14 +76,21 @@ pub fn handler(
         1000000000 * 1,
     )?;
 
-    anchor_spl::token::revoke(CpiContext::new_with_signer(
+    anchor_spl::token::revoke(CpiContext::new(
         ctx.accounts.token_program.to_account_info(),
         anchor_spl::token::Revoke {
             source: user_token.to_account_info(),
-            authority: stake_token.to_account_info(),
+            authority: payer.to_account_info(),
         },
-        &[&signers_seeds],
     ))?;
+
+    /* send the SOL to the payer and erase the data of stake_account */
+    **stake_account.to_account_info().try_borrow_mut_lamports()? -= stake_account_balance;
+    **payer.to_account_info().try_borrow_mut_lamports()? += stake_account_balance;
+    stake_account
+        .to_account_info()
+        .try_borrow_mut_data()?
+        .fill(0);
 
     Ok(())
 }

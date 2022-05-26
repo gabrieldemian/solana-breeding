@@ -11,7 +11,7 @@ pub fn handler(ctx: Context<Stake>, bump: u8) -> Result<()> {
     let token = &ctx.accounts.token.to_account_info();
     let authority = &ctx.accounts.authority.to_account_info();
     let stake_token = &ctx.accounts.stake_token.to_account_info();
-    // let backend_wallet = &ctx.accounts.backend_wallet.to_account_info();
+    let backend_wallet = &ctx.accounts.backend_wallet.to_account_info();
     let stake_account = &mut ctx.accounts.stake_account;
 
     stake_account.end = end;
@@ -23,26 +23,24 @@ pub fn handler(ctx: Context<Stake>, bump: u8) -> Result<()> {
 
     let signers_seeds = [b"stake_token", mint_key.as_ref(), &[bump]];
 
-    // anchor_spl::token::approve(
-    //     CpiContext::new_with_signer(
-    //         ctx.accounts.token_program.to_account_info(),
-    //         anchor_spl::token::Approve {
-    //             to: token.clone(),
-    //             delegate: backend_wallet.clone(),
-    //             authority: authority.clone(),
-    //         },
-    //         &[&signers_seeds],
-    //     ),
-    //     1,
-    // )?;
+    anchor_spl::token::approve(
+        CpiContext::new(
+            ctx.accounts.token_program.to_account_info(),
+            anchor_spl::token::Approve {
+                to: token.clone(),
+                delegate: backend_wallet.clone(),
+                authority: authority.clone(),
+            },
+        ),
+        1,
+    )?;
 
-    // anchor_spl::token::revoke(CpiContext::new_with_signer(
+    // anchor_spl::token::revoke(CpiContext::new(
     //     ctx.accounts.token_program.to_account_info(),
     //     anchor_spl::token::Revoke {
     //         source: token.clone(),
     //         authority: authority.clone(),
     //     },
-    //     &[&signers_seeds],
     // ))?;
 
     /* transfer the token from the user token account to the program's */

@@ -12,34 +12,36 @@ const runes = ['ice_rune', 'fire_rune', 'sand_rune', 'earth_rune']
 
 describe('starting initialize init runes', () => {
   it('can initialize init runes', async () => {
-    /* token account of the game itself */
-    const [mint, mintBump] = await PublicKey.findProgramAddress(
-      [Buffer.from(runes[3])],
-      new PublicKey(idl.metadata.address)
-    )
+    runes.forEach(async (rune) => {
+      /* token account of the game itself */
+      const [mint, mintBump] = await PublicKey.findProgramAddress(
+        [Buffer.from(rune)],
+        new PublicKey(idl.metadata.address)
+      )
 
-    /* token account of the game itself */
-    const [token, tokenBump] = await PublicKey.findProgramAddress(
-      [mint.toBuffer()],
-      new PublicKey(idl.metadata.address)
-    )
+      /* token account of the game itself */
+      const [token, tokenBump] = await PublicKey.findProgramAddress(
+        [mint.toBuffer()],
+        new PublicKey(idl.metadata.address)
+      )
 
-    const accounts = {
-      payer: provider.wallet.publicKey,
-      tokenProgram: TOKEN_PROGRAM_ID,
-      pigMachine,
-      token,
-      mint,
-      rent: SYSVAR_RENT_PUBKEY,
-      systemProgram: SystemProgram.programId
-    }
+      const accounts = {
+        payer: provider.wallet.publicKey,
+        tokenProgram: TOKEN_PROGRAM_ID,
+        pigMachine,
+        token,
+        mint,
+        rent: SYSVAR_RENT_PUBKEY,
+        systemProgram: SystemProgram.programId
+      }
 
-    await program.methods
-      .initializeRunes(tokenBump, mintBump, runes[3])
-      .accounts(accounts)
-      .rpc()
+      await program.methods
+        .initializeRunes(tokenBump, mintBump, rune)
+        .accounts(accounts)
+        .rpc()
 
-    console.log('mint ->', mint.toBase58())
-    console.log('token ->', token.toBase58())
+      console.log(`${rune} mint ->`, mint.toBase58())
+      console.log(`${rune} token ->`, token.toBase58())
+    })
   })
 })

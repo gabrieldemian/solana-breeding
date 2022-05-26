@@ -30,9 +30,9 @@ pub struct Breed<'info> {
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
 
-    #[account(constraint = male.owner == authority.key())]
-    pub male: Account<'info, TokenAccount>,
+    // #[account(constraint = male.owner == authority.key())]
+    // pub male: Account<'info, TokenAccount>,
 
-    #[account(constraint = female.owner == authority.key())]
-    pub female: Account<'info, TokenAccount>,
+    // #[account(constraint = female.owner == authority.key())]
+    // pub female: Account<'info, TokenAccount>,
 }

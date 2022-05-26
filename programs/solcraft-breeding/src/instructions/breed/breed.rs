@@ -12,8 +12,8 @@ pub fn handler(ctx: Context<Breed>) -> Result<()> {
   // let metadata = Metadata::from_account_info(metadata_account)?;
   // let new_mint = &ctx.accounts.mint.to_account_info();
   // let token = &ctx.accounts.token.to_account_info();
-  let _male = &ctx.accounts.male.to_account_info();
-  let _female = &ctx.accounts.male.to_account_info();
+//   let _male = &ctx.accounts.male.to_account_info();
+//   let _female = &ctx.accounts.male.to_account_info();
 
   let authority_seeds = [PREFIX_PIG.as_bytes(), &[pig_machine.bump]];
 
@@ -46,7 +46,7 @@ pub fn handler(ctx: Context<Breed>) -> Result<()> {
           pig_machine.key(),
           "Pig Child #1".to_string(),
           "PIG".to_string(),
-          "https://gateway.pinata.cloud/ipfs/QmVtfXP8LWCm1pvmznJ4tige28Tm3FMmA81KfsVm31k8ES".to_string(),
+          "https://spdda7jyig6ja6wwkgt7oz2gf4q4qgy2kqqeqmgmoxyraurv.arweave.net/k8YwfThBvJB61--lGn92dGLyHIGxpUIEgwzHXxEFI1c".to_string(),
           Some(creators),
           500, // royalties percentage in basis point 500 = 5%
           true, // update auth is signer?

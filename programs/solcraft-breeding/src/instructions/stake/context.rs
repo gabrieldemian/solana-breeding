@@ -1,6 +1,6 @@
+use crate::state::{PigMachine, StakeAccount, PREFIX_PIG};
 use anchor_lang::prelude::*;
-use anchor_spl::token::{Mint, TokenAccount, Token};
-use crate::state::{StakeAccount, PREFIX_PIG, PigMachine};
+use anchor_spl::token::{Mint, Token, TokenAccount};
 
 #[derive(Accounts)]
 #[instruction(bump: u8)]
@@ -13,7 +13,7 @@ pub struct Stake<'info> {
         space = 8 + 4 + 32 + 32 + 1,
         constraint = stake_account.to_account_info().owner == program_id
     )]
-    pub stake_account: Account<'info, StakeAccount>,
+    pub stake_account: Box<Account<'info, StakeAccount>>,
 
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub mint: Account<'info, Mint>,
@@ -30,10 +30,12 @@ pub struct Stake<'info> {
         mut,
         associated_token::mint = mint,
         associated_token::authority = authority,
-        constraint = token.owner == authority.key(),
         constraint = token.mint == mint.key(),
     )]
     pub token: Account<'info, TokenAccount>,
+
+    /// CHECK: secure because we are not reading or mutating data
+    pub backend_wallet: AccountInfo<'info>,
 
     #[account(mut)]
     pub authority: Signer<'info>,

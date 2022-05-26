@@ -22,7 +22,7 @@ pub struct StakeItem {
     /// in percentage
     pub success_rate: u8,
     /// in hours
-    pub foraging_time: u8
+    pub foraging_time: u8,
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, PartialEq)]

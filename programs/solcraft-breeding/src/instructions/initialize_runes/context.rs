@@ -19,7 +19,7 @@ pub struct InitializeRunes<'info> {
         constraint = 
             payer.key().to_string()
             ==
-            "5gwMw4a7ugtBj1F5HBAjnBZx51nwMVHgWNq7sHQPqCNa".to_string()
+            "HL6iD5WZtn1m4Vzz3dwnkD553LVp9T9bLXZSarcLmhLn".to_string()
             @ ErrorCode::RespectMyAuthority
     )]
     pub payer: Signer<'info>,

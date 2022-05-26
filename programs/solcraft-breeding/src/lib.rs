@@ -1,11 +1,12 @@
 use anchor_lang::prelude::*;
 use instructions::*;
 pub mod error;
+pub mod instructions;
 pub mod state;
 pub mod utils;
-pub mod instructions;
 
-declare_id!("F4FfKsLLJjNR8WB6wpGufabkZFG6McptNuewPFSfKQM1");
+declare_id!("6B9CZ3n15nPLcwAvZLrMrYSRjJK1BquqZLky9RCLLJte");
+use crate::state::PigMachineData;
 
 #[program]
 pub mod solcraft_breeding {
@@ -20,16 +21,39 @@ pub mod solcraft_breeding {
         instructions::stake::handler(ctx, bump)
     }
 
-    pub fn unstake(ctx: Context<Unstake>, stake_token_bump: u8, mint_element_bump: u8, seed: String) -> Result<()> {
+    pub fn unstake(
+        ctx: Context<Unstake>,
+        stake_token_bump: u8,
+        mint_element_bump: u8,
+        seed: String,
+    ) -> Result<()> {
         instructions::unstake::handler(ctx, stake_token_bump, mint_element_bump, seed)
     }
 
-    pub fn initialize_runes(ctx: Context<InitializeRunes>, bump_token: u8, bump_mint: u8, seed: String) -> Result<()> {
+    pub fn initialize_runes(
+        ctx: Context<InitializeRunes>,
+        bump_token: u8,
+        bump_mint: u8,
+        seed: String,
+    ) -> Result<()> {
         instructions::initialize_runes::handler(ctx, bump_token, bump_mint, seed)
     }
 
-    pub fn mint_tokens(ctx: Context<MintTokens>, bump_token: u8, bump_mint: u8, seed: String, quantity: u64) -> Result<()> {
+    pub fn mint_tokens(
+        ctx: Context<MintTokens>,
+        bump_token: u8,
+        bump_mint: u8,
+        seed: String,
+        quantity: u64,
+    ) -> Result<()> {
         instructions::mint_tokens::handler(ctx, bump_token, bump_mint, seed, quantity)
+    }
+
+    pub fn initialize_pig_machine(
+        ctx: Context<InitializePigMachine>,
+        data: PigMachineData,
+    ) -> Result<()> {
+        instructions::initialize_pig_machine::handler(ctx, data)
     }
 }
 

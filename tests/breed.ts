@@ -5,8 +5,6 @@ import {
   SystemProgram,
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js'
-import { Accounts } from '@project-serum/anchor'
-import { IdlAccountItem } from '@project-serum/anchor/dist/cjs/idl'
 import {
   createAssociatedTokenAccountInstruction,
   DEVNET_WALLET,
@@ -24,28 +22,13 @@ describe('will breed 2 pigs', () => {
         MintLayout.span
       )
 
-    // const mint = new PublicKey(
-    //   '95HB9nxTrMFuj32zeN77rNGyHBT4sRgn7LCX9P3yAiCT'
+    // const male = new PublicKey(
+    //   '9a57Z1LkkkZvoLCGh7mEuFKZGzrxLWT35ymYsmeHFAbJ'
     // )
 
-    // get the associated account
-    // const token = await getTokenWallet(DEVNET_WALLET.publicKey, mint)
-    // const nsei = await provider.connection.getAccountInfo(token)
-    // console.log(nsei)
-
-    // console.log('token is', token.toBase58())
-
-    // const metadata = await getMetadata(mint)
-
-    // console.log('meta', metadata.toBase58())
-
-    const male = new PublicKey(
-      'BodBeWwYx13aC4e2gnCKgYXj8yienvauqTx7zGpzKsxp'
-    )
-
-    const female = new PublicKey(
-      '3NkxNJAwuBnvn6HSs4cyXacqCns1mWmZsJaSEYHnmzLE'
-    )
+    // const female = new PublicKey(
+    //   'ybJcqxwr1i3s8BiSWo2xw77FDNs89GK9CtdDzWKuP7Z'
+    // )
 
     const newMint = Keypair.generate()
     const newToken = await getTokenWallet(
@@ -57,33 +40,18 @@ describe('will breed 2 pigs', () => {
 
     // const male = await getTokenWallet(DEVNET_WALLET.publicKey, maleMint)
 
-    // const largestAccounts =
-    //   await provider.connection.getTokenLargestAccounts(male)
-
-    // const largestAccountInfo =
-    //   await provider.connection.getParsedAccountInfo(
-    //     largestAccounts.value[0].address
-    //   )
-    // console.log('owner ', largestAccountInfo.value.data)
-
-    console.log('space: ', MintLayout.span)
-    console.log('lamports: ', rent)
-
     const accounts = {
       authority: DEVNET_WALLET.publicKey,
       tokenProgram: TOKEN_PROGRAM_ID,
       systemProgram: SystemProgram.programId,
       mint: newMint.publicKey,
-      // token,
       metadata: newMetadata,
-      // newMetadata,
-      // newMint: newMint.publicKey,
       tokenMetadataProgram: TOKEN_METADATA_PROGRAM_ID,
       pigMachine,
-      male,
-      female,
+      // male,
+      // female,
       rent: SYSVAR_RENT_PUBKEY
-    } as Accounts<IdlAccountItem>
+    }
 
     await program.methods
       .breed()

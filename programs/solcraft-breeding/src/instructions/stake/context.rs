@@ -15,7 +15,7 @@ pub struct Stake<'info> {
     )]
     pub stake_account: Box<Account<'info, StakeAccount>>,
 
-    /// CHECK: This is not dangerous because we don't read or write from this account
+    /// CHECK: secure because we don't read or write from this account
     pub mint: Account<'info, Mint>,
 
     #[account(

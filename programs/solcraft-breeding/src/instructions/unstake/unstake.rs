@@ -76,13 +76,16 @@ pub fn handler(
         1000000000 * 1,
     )?;
 
-    anchor_spl::token::revoke(CpiContext::new(
-        ctx.accounts.token_program.to_account_info(),
-        anchor_spl::token::Revoke {
-            source: user_token.to_account_info(),
-            authority: payer.to_account_info(),
-        },
-    ))?;
+    /* todo: call this on the frontend, because this will be called */
+    /* only by the backend wallet, and it cant sign for the user */
+
+    // anchor_spl::token::revoke(CpiContext::new(
+    //     ctx.accounts.token_program.to_account_info(),
+    //     anchor_spl::token::Revoke {
+    //         source: user_token.to_account_info(),
+    //         authority: payer.to_account_info(),
+    //     },
+    // ))?;
 
     /* send the SOL to the payer and erase the data of stake_account */
     **stake_account.to_account_info().try_borrow_mut_lamports()? -= stake_account_balance;

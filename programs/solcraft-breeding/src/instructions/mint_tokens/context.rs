@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{token::{Token, TokenAccount, Mint}};
+use anchor_spl::token::{Token, TokenAccount, Mint};
 
 use crate::state::{PREFIX_PIG, PigMachine};
 use crate::error::ErrorCode;

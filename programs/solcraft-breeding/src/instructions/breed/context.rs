@@ -1,6 +1,6 @@
+use crate::state::{PigMachine, PREFIX_PIG};
 use anchor_lang::prelude::*;
-use anchor_spl::token::{TokenAccount, Token};
-use crate::state::{PREFIX_PIG, PigMachine};
+use anchor_spl::token::Token;
 
 #[derive(Accounts)]
 pub struct Breed<'info> {
@@ -29,7 +29,6 @@ pub struct Breed<'info> {
     pub token_metadata_program: AccountInfo<'info>,
     pub system_program: Program<'info, System>,
     pub rent: Sysvar<'info, Rent>,
-
     // #[account(constraint = male.owner == authority.key())]
     // pub male: Account<'info, TokenAccount>,
 

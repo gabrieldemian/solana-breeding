@@ -5,21 +5,15 @@ pub enum ErrorCode {
     #[msg("You don't have enough SOL to mint this NFT")]
     NotEnoughSOL,
 
-    #[msg("The launch date has not come yet")]
-    CandyMachineNotLiveYet,
-
-    #[msg("There are no more NFTs to mint in this collection")]
-    CandyMachineEmpty,
-
-    #[msg("You need to pass the candy machine PDA")]
-    CandyMachineWrongAddress,
-
     #[msg("You do not own one of the NFTs sent")]
     NotOwnerOfNFT,
 
     #[msg("You can't unstake before the due time")]
     StakeNotReady,
 
-    #[msg("You are not allowed to do this!")]
+    #[msg("Only the backend wallet is allowed to call this transaction")]
     RespectMyAuthority,
+
+    #[msg("You passed a mint which the authority is not the wallet of the backend")]
+    MintWrongAuthority,
 }

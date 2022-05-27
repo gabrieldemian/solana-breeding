@@ -1,6 +1,6 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
-import { pigMachine } from '../constants'
+import { pigMachine, symbolToRewardDevnet } from '../constants'
 import idl from '../target/idl/solcraft_breeding.json'
 import {
   createAssociatedTokenAccountInstruction,
@@ -9,29 +9,25 @@ import {
   provider
 } from '../utils'
 
-const runes = ['ice_rune', 'fire_rune', 'sand_rune', 'earth_rune']
-
 describe('can unstake a NFT', () => {
   it('can unstake', async () => {
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      'BuXs3UEarSDtSLhnJCj1HnqnQa5BVBSqFDZFypAuR39J'
+      '4EA8Nj9t286iVRrgrxVSD16ZGRBrzz3XNtZrojmYxhAN'
+    )
+
+    const user = new PublicKey(
+      'HL6iD5WZtn1m4Vzz3dwnkD553LVp9T9bLXZSarcLmhLn'
     )
 
     /* token account of the user */
-    const userToken = await getTokenWallet(provider.wallet.publicKey, mint)
+    const userToken = await getTokenWallet(user, mint)
 
-    /* mint PDA of the element to be given as rewards */
-    const [mintElement, mintElementBump] =
-      await PublicKey.findProgramAddress(
-        [Buffer.from(runes[0])],
-        new PublicKey(idl.metadata.address)
-      )
+    /* mint of the element to be given as rewards */
+    const mintElement = new PublicKey(symbolToRewardDevnet.FIRE)
 
-    const tokenElement = await getTokenWallet(
-      provider.wallet.publicKey,
-      mintElement
-    )
+    /* token of the user from the mint */
+    const tokenElement = await getTokenWallet(user, mintElement)
 
     /* token account of the mint element that will belong to the user */
 
@@ -57,13 +53,14 @@ describe('can unstake a NFT', () => {
 
     /* if the receiver has a token account, we create it */
     /* if not, we just skip this step */
-    const stakeTokenHasToken = !!stakeTokenInfo.value
+    const isStakeTokenCreated = !!stakeTokenInfo.value
     const tokenElementHasToken = !!tokenElementInfo.value
 
     const accounts = {
       tokenElement,
       mintElement,
       mint,
+      user,
       userToken,
       pigMachine,
       stakeToken,
@@ -72,18 +69,17 @@ describe('can unstake a NFT', () => {
       tokenProgram: TOKEN_PROGRAM_ID
     }
 
-    let tx = program.methods
-      .unstake(stakeTokenBump, mintElementBump, runes[0])
-      .accounts(accounts)
+    let tx = program.methods.unstake(stakeTokenBump).accounts(accounts)
 
     const preInstructions = []
 
     if (!tokenElementHasToken) {
+      console.log('!tokenElementHasToken')
       preInstructions.push(
         createAssociatedTokenAccountInstruction(
           tokenElement, // new associated account
           provider.wallet.publicKey, // payer
-          provider.wallet.publicKey, // wallet address (to)
+          user, // wallet address (to)
           mintElement // mint address
         )
       )
@@ -91,7 +87,8 @@ describe('can unstake a NFT', () => {
 
     /* if the target doesn't have an associated token account */
     /* first, we need to create one for him, and then transfer the token */
-    if (!stakeTokenHasToken) {
+    if (!isStakeTokenCreated) {
+      console.log('!isStakeTokenCreated')
       preInstructions.push(
         createAssociatedTokenAccountInstruction(
           stakeToken, // new associated account
@@ -107,14 +104,20 @@ describe('can unstake a NFT', () => {
     }
 
     console.log('mint ->', mint.toBase58())
-    console.log('stakeToken token -> ', stakeToken.toBase58())
+    console.log('stakeToken -> ', stakeToken.toBase58())
+    console.log('stakeAccount -> ', stakeAccount.toBase58())
     console.log('userToken -> ', userToken.toBase58())
     console.log('tokenElement -> ', tokenElement.toBase58())
     console.log(
       'does the stakeToken has a token address for that NFT? ',
-      stakeTokenHasToken
+      isStakeTokenCreated
     )
 
     await tx.rpc()
+
+    const stakeAccountData = await program.account.stakeAccount.fetch(
+      stakeAccount
+    )
+    console.log('stake data:', stakeAccountData)
   })
 })

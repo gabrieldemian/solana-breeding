@@ -1,47 +1,48 @@
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
-  PublicKey,
+  getAssociatedTokenAddress,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
+import {
+  Keypair,
   SystemProgram,
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js'
-import idl from '../target/idl/solcraft_breeding.json'
+// eslint-disable-next-line max-len
+import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/token'
 import { program, provider } from '../utils'
-import { pigMachine } from '../constants'
-
-const runes = ['ice_rune', 'fire_rune', 'sand_rune', 'earth_rune']
+import { symbols } from '../constants'
 
 describe('starting initialize init runes', () => {
   it('can initialize init runes', async () => {
-    runes.forEach(async (rune) => {
+    for (const symbol of symbols) {
       /* token account of the game itself */
-      const [mint, mintBump] = await PublicKey.findProgramAddress(
-        [Buffer.from(rune)],
-        new PublicKey(idl.metadata.address)
-      )
+      const mint = new Keypair()
 
       /* token account of the game itself */
-      const [token, tokenBump] = await PublicKey.findProgramAddress(
-        [mint.toBuffer()],
-        new PublicKey(idl.metadata.address)
+      // eslint-disable-next-line no-await-in-loop
+      const token = await getAssociatedTokenAddress(
+        mint.publicKey,
+        provider.wallet.publicKey
       )
 
       const accounts = {
         payer: provider.wallet.publicKey,
         tokenProgram: TOKEN_PROGRAM_ID,
-        pigMachine,
         token,
-        mint,
+        mint: mint.publicKey,
         rent: SYSVAR_RENT_PUBKEY,
-        systemProgram: SystemProgram.programId
+        systemProgram: SystemProgram.programId,
+        associatedTokenProgram: ASSOCIATED_PROGRAM_ID
       }
 
+      // eslint-disable-next-line no-await-in-loop
       await program.methods
-        .initializeRunes(tokenBump, mintBump, rune)
+        .initializeRunes()
+        .signers([mint])
         .accounts(accounts)
         .rpc()
 
-      console.log(`${rune} mint ->`, mint.toBase58())
-      console.log(`${rune} token ->`, token.toBase58())
-    })
+      console.log(`${symbol} mint ->`, mint.publicKey.toBase58())
+    }
   })
 })

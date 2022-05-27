@@ -1,30 +1,23 @@
-use crate::state::{PigMachine, StakeAccount, PREFIX_PIG};
+use crate::error::ErrorCode;
+use crate::state::{StakeAccount, StakeAccountData};
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 
 #[derive(Accounts)]
-#[instruction(bump: u8)]
+#[instruction(bump: u8, data: StakeAccountData)]
 pub struct Stake<'info> {
     #[account(
         init,
+        payer = backend_wallet,
         seeds=[b"stake_account", mint.key().as_ref()],
-        payer = authority,
         bump,
-        space = 8 + 4 + 32 + 32 + 1,
+        space = 8 + 4 + 4 + 1 + 32 + 32 + 1,
         constraint = stake_account.to_account_info().owner == program_id
     )]
     pub stake_account: Box<Account<'info, StakeAccount>>,
 
     /// CHECK: secure because we don't read or write from this account
     pub mint: Account<'info, Mint>,
-
-    #[account(
-        mut,
-        seeds = [PREFIX_PIG.as_bytes()],
-        bump = pig_machine.bump,
-        constraint = pig_machine.to_account_info().owner == program_id
-    )]
-    pub pig_machine: Account<'info, PigMachine>,
 
     #[account(
         mut,
@@ -35,15 +28,22 @@ pub struct Stake<'info> {
     pub token: Account<'info, TokenAccount>,
 
     /// CHECK: secure because we are not reading or mutating data
-    pub backend_wallet: AccountInfo<'info>,
+    #[account(
+        mut,
+        constraint =
+            backend_wallet.key().to_string() ==
+            "BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr".to_string()
+            @ ErrorCode::RespectMyAuthority
+    )]
+    pub backend_wallet: Signer<'info>,
 
-    #[account(mut)]
-    pub authority: Signer<'info>,
+    /// CHECK: secure because we are not mutating data
+    pub authority: AccountInfo<'info>,
     pub token_program: Program<'info, Token>,
 
     #[account(
         init,
-        payer = authority,
+        payer = backend_wallet,
         seeds = [b"stake_token", mint.key().as_ref()],
         bump,
         token::mint = mint,

@@ -4,9 +4,9 @@ pub mod error;
 pub mod instructions;
 pub mod state;
 pub mod utils;
+use crate::state::{PigMachineData, StakeAccountData};
 
-declare_id!("6B9CZ3n15nPLcwAvZLrMrYSRjJK1BquqZLky9RCLLJte");
-use crate::state::PigMachineData;
+declare_id!("2gQx7EEfMRNFVFG8NVfvE6KhCDV1RpWGRpcWVHCJJztM");
 
 #[program]
 pub mod solcraft_breeding {
@@ -17,26 +17,16 @@ pub mod solcraft_breeding {
         instructions::breed::handler(ctx)
     }
 
-    pub fn stake(ctx: Context<Stake>, bump: u8) -> Result<()> {
-        instructions::stake::handler(ctx, bump)
+    pub fn stake(ctx: Context<Stake>, bump: u8, data: StakeAccountData) -> Result<()> {
+        instructions::stake::handler(ctx, bump, data)
     }
 
-    pub fn unstake(
-        ctx: Context<Unstake>,
-        stake_token_bump: u8,
-        mint_element_bump: u8,
-        seed: String,
-    ) -> Result<()> {
-        instructions::unstake::handler(ctx, stake_token_bump, mint_element_bump, seed)
+    pub fn unstake(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
+        instructions::unstake::handler(ctx, stake_token_bump)
     }
 
-    pub fn initialize_runes(
-        ctx: Context<InitializeRunes>,
-        bump_token: u8,
-        bump_mint: u8,
-        seed: String,
-    ) -> Result<()> {
-        instructions::initialize_runes::handler(ctx, bump_token, bump_mint, seed)
+    pub fn initialize_runes(ctx: Context<InitializeRunes>) -> Result<()> {
+        instructions::initialize_runes::handler(ctx)
     }
 
     pub fn mint_tokens(

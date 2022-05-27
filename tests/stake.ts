@@ -32,8 +32,6 @@ describe('can stake a NFT', () => {
       new PublicKey(idl.metadata.address)
     )
 
-    console.log('vc?', stakeAccount.toBase58())
-
     const stakeAccountInfo =
       await provider.connection.getParsedAccountInfo(stakeAccount)
 

@@ -25,21 +25,6 @@ pub fn handler(ctx: Context<Stake>, bump: u8, data: StakeAccountData) -> Result<
 
     let signers_seeds = [b"stake_token", mint_key.as_ref(), &[bump]];
 
-    /* todo: call this on the frontend, because this will be called */
-    /* only by the backend wallet, and it cant sign for the user */
-
-    // anchor_spl::token::approve(
-    //     CpiContext::new(
-    //         ctx.accounts.token_program.to_account_info(),
-    //         anchor_spl::token::Approve {
-    //             to: token.clone(),
-    //             delegate: backend_wallet.clone(),
-    //             authority: authority.clone(),
-    //         },
-    //     ),
-    //     1,
-    // )?;
-
     /* transfer the token from the user token account to the program's */
     anchor_spl::token::transfer(
         CpiContext::new_with_signer(

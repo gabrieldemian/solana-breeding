@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
 
 use super::Unstake;
+use crate::error::ErrorCode;
 
 pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
     let now = Clock::get().unwrap().unix_timestamp as u32;
@@ -11,9 +12,9 @@ pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
     let mint_element = &mut ctx.accounts.mint_element.to_account_info();
     let token_element = &ctx.accounts.token_element.to_account_info();
 
-    // if now < stake_account.end {
-    //     return Err(ErrorCode::StakeNotReady.into());
-    // }
+    if now < stake_account.data.time_to_end_foraging {
+        return Err(ErrorCode::StakeNotReady.into());
+    }
 
     msg!(
         "stake will end in: {}",

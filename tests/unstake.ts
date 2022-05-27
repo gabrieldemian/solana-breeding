@@ -107,17 +107,18 @@ describe('can unstake a NFT', () => {
     console.log('stakeToken -> ', stakeToken.toBase58())
     console.log('stakeAccount -> ', stakeAccount.toBase58())
     console.log('userToken -> ', userToken.toBase58())
+    console.log('mintElement -> ', mintElement.toBase58())
     console.log('tokenElement -> ', tokenElement.toBase58())
     console.log(
       'does the stakeToken has a token address for that NFT? ',
       isStakeTokenCreated
     )
 
-    await tx.rpc()
+    // const stakeAccountData = await program.account.stakeAccount.fetch(
+    //   stakeAccount
+    // )
+    // console.log('stake data:', stakeAccountData)
 
-    const stakeAccountData = await program.account.stakeAccount.fetch(
-      stakeAccount
-    )
-    console.log('stake data:', stakeAccountData)
+    await tx.rpc()
   })
 })

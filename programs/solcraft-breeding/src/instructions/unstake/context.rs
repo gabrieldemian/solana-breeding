@@ -8,6 +8,21 @@ use anchor_spl::token::{Mint, Token, TokenAccount};
 pub struct Unstake<'info> {
     #[account(
         mut,
+        mint::authority = payer,
+        mint::decimals = 9,
+    )]
+    pub mint_element: Account<'info, Mint>,
+
+    #[account(
+        mut,
+        seeds=[b"stake_account", mint.key().as_ref()],
+        bump,
+        constraint = stake_account.to_account_info().owner == program_id,
+    )]
+    pub stake_account: Account<'info, StakeAccount>,
+
+    #[account(
+        mut,
         seeds = [PREFIX_PIG.as_bytes()],
         bump = pig_machine.bump,
         constraint = pig_machine.to_account_info().owner == program_id
@@ -35,13 +50,6 @@ pub struct Unstake<'info> {
     )]
     pub token_element: Box<Account<'info, TokenAccount>>,
 
-    #[account(
-        mut,
-        mint::authority = payer,
-        mint::decimals = 9,
-    )]
-    pub mint_element: Account<'info, Mint>,
-
     pub token_program: Program<'info, Token>,
 
     #[account(
@@ -50,16 +58,9 @@ pub struct Unstake<'info> {
         bump,
         token::mint = mint,
         token::authority = stake_token,
+        // close = payer
     )]
     pub stake_token: Account<'info, TokenAccount>,
-
-    #[account(
-        mut,
-        seeds=[b"stake_account", mint.key().as_ref()],
-        bump,
-        constraint = stake_account.to_account_info().owner == program_id,
-    )]
-    pub stake_account: Box<Account<'info, StakeAccount>>,
 
     #[account(
         mut,

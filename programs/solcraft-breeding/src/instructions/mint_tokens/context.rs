@@ -1,43 +1,33 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Token, TokenAccount, Mint};
-
-use crate::state::{PREFIX_PIG, PigMachine};
 use crate::error::ErrorCode;
 
 #[derive(Accounts)]
-#[instruction(bump_token: u8, bump_mint: u8, seed: String, quantity: u64)]
+#[instruction(quantity: u64)]
 pub struct MintTokens<'info> {
-    #[account(
-        seeds=[PREFIX_PIG.as_bytes()],
-        bump = pig_machine.bump,
-        constraint = pig_machine.to_account_info().owner == program_id,
-    )]
-    pub pig_machine: Account<'info, PigMachine>,
-    
     #[account(
         constraint = 
             payer.key().to_string()
             ==
-            "5gwMw4a7ugtBj1F5HBAjnBZx51nwMVHgWNq7sHQPqCNa".to_string()
+            "BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr".to_string()
             @ ErrorCode::RespectMyAuthority
     )]
     pub payer: Signer<'info>,
 
+    /// CHECK: not dangerous becouse we dont mutate or read data
+    pub user: AccountInfo<'info>,
+
     #[account(
         mut,
-        seeds = [seed.as_bytes()],
-        bump = bump_mint,
-        mint::authority = pig_machine,
+        mint::authority = payer,
         mint::decimals = 9,
     )]
     pub mint: Account<'info, Mint>,
 
     #[account(
         mut,
-        seeds = [mint.key().as_ref()],
-        bump = bump_token,
         token::mint = mint,
-        token::authority = pig_machine,
+        token::authority = user,
     )]
     pub token: Account<'info, TokenAccount>,
     pub token_program: Program<'info, Token>,

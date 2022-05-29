@@ -1,8 +1,8 @@
 [programs.localnet]
-solcraft_breeding = "2gQx7EEfMRNFVFG8NVfvE6KhCDV1RpWGRpcWVHCJJztM"
+solcraft_breeding = "4fM7kubepyzaNe5JypWehLy5YTk5gHNSvymTDbbpnoRg"
 
 [programs.devnet]
-solcraft_breeding = "2gQx7EEfMRNFVFG8NVfvE6KhCDV1RpWGRpcWVHCJJztM"
+solcraft_breeding = "4fM7kubepyzaNe5JypWehLy5YTk5gHNSvymTDbbpnoRg"
 
 [registry]
 url = "https://anchor.projectserum.com"

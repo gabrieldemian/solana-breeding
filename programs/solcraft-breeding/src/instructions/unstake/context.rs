@@ -21,13 +21,13 @@ pub struct Unstake<'info> {
     )]
     pub stake_account: Account<'info, StakeAccount>,
 
-    #[account(
-        mut,
-        seeds = [PREFIX_PIG.as_bytes()],
-        bump = pig_machine.bump,
-        constraint = pig_machine.to_account_info().owner == program_id
-    )]
-    pub pig_machine: Account<'info, PigMachine>,
+    // #[account(
+    //     mut,
+    //     seeds = [PREFIX_PIG.as_bytes()],
+    //     bump = pig_machine.bump,
+    //     constraint = pig_machine.to_account_info().owner == program_id
+    // )]
+    // pub pig_machine: Account<'info, PigMachine>,
 
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub mint: Account<'info, Mint>,

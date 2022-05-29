@@ -100,8 +100,8 @@ describe('can stake a NFT', () => {
     const data = {
       timeToEndForaging: 999,
       stakeInterval: 222,
-      amountOfItems: 4,
-      metadata: metadataAccount.data.uri
+      amountOfItems: 4
+      // metadata: metadataAccount.data.uri
     }
 
     await program.methods
@@ -110,3 +110,5 @@ describe('can stake a NFT', () => {
       .rpc()
   })
 })
+
+// spl-token approve 9DTReNPRdNqRcX5VT8PPLxQSSi85Cgg59XBh4MnGScGi 1 BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr

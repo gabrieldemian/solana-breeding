@@ -6,7 +6,7 @@ pub mod state;
 pub mod utils;
 use crate::state::{PigMachineData, StakeAccountData};
 
-declare_id!("2gQx7EEfMRNFVFG8NVfvE6KhCDV1RpWGRpcWVHCJJztM");
+declare_id!("4fM7kubepyzaNe5JypWehLy5YTk5gHNSvymTDbbpnoRg");
 
 #[program]
 pub mod solcraft_breeding {
@@ -29,14 +29,8 @@ pub mod solcraft_breeding {
         instructions::initialize_runes::handler(ctx)
     }
 
-    pub fn mint_tokens(
-        ctx: Context<MintTokens>,
-        bump_token: u8,
-        bump_mint: u8,
-        seed: String,
-        quantity: u64,
-    ) -> Result<()> {
-        instructions::mint_tokens::handler(ctx, bump_token, bump_mint, seed, quantity)
+    pub fn mint_tokens(ctx: Context<MintTokens>, quantity: u64) -> Result<()> {
+        instructions::mint_tokens::handler(ctx, quantity)
     }
 
     pub fn initialize_pig_machine(

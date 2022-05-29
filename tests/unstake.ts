@@ -1,6 +1,6 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
-import { pigMachine, symbolToRewardDevnet } from '../constants'
+import { symbolToRewardDevnet } from '../constants'
 import idl from '../target/idl/solcraft_breeding.json'
 import {
   createAssociatedTokenAccountInstruction,
@@ -62,7 +62,7 @@ describe('can unstake a NFT', () => {
       mint,
       user,
       userToken,
-      pigMachine,
+      // pigMachine,
       stakeToken,
       stakeAccount,
       payer: provider.wallet.publicKey,

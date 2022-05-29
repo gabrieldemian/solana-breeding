@@ -14,7 +14,7 @@ describe('-- starting getRarities --', () => {
     const allUserStakes = await program.account.stakeAccount.all([
       {
         memcmp: {
-          offset: 8 + 4 + 4 + 1 + 4 + 70,
+          offset: 8 + 4 + 4 + 1,
           bytes: 'HL6iD5WZtn1m4Vzz3dwnkD553LVp9T9bLXZSarcLmhLn'
         }
       }

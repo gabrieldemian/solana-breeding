@@ -20,7 +20,7 @@ export const pigMachine = new PublicKey(
 )
 
 export const programId = new PublicKey(
-  '2gQx7EEfMRNFVFG8NVfvE6KhCDV1RpWGRpcWVHCJJztM'
+  '4fM7kubepyzaNe5JypWehLy5YTk5gHNSvymTDbbpnoRg'
 )
 
 /* MAINNET */

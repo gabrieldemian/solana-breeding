@@ -49,7 +49,7 @@ pub struct StakeAccount {
     pub user: Pubkey,
     pub token: Pubkey,
     pub bump: u8,
-    pub metadata: String,
+    // pub metadata: String,
 }
 
 /* seeds of the PDA, can be anything you want */

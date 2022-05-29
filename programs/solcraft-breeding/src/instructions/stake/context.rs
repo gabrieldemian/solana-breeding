@@ -11,7 +11,7 @@ pub struct Stake<'info> {
         payer = backend_wallet,
         seeds=[b"stake_account", mint.key().as_ref()],
         bump,
-        space = 8 + 4 + 4 + 1 + 32 + 32 + 1 + 74,
+        space = 8 + 4 + 4 + 1 + 32 + 32 + 1,
         constraint = stake_account.to_account_info().owner == program_id
     )]
     pub stake_account: Account<'info, StakeAccount>,

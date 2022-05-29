@@ -11,10 +11,10 @@ pub struct Stake<'info> {
         payer = backend_wallet,
         seeds=[b"stake_account", mint.key().as_ref()],
         bump,
-        space = 8 + 4 + 4 + 1 + 32 + 32 + 1,
+        space = 8 + 4 + 4 + 1 + 32 + 32 + 1 + 74,
         constraint = stake_account.to_account_info().owner == program_id
     )]
-    pub stake_account: Box<Account<'info, StakeAccount>>,
+    pub stake_account: Account<'info, StakeAccount>,
 
     /// CHECK: secure because we don't read or write from this account
     pub mint: Account<'info, Mint>,
@@ -25,7 +25,7 @@ pub struct Stake<'info> {
         associated_token::authority = authority,
         constraint = token.mint == mint.key(),
     )]
-    pub token: Account<'info, TokenAccount>,
+    pub token: Box<Account<'info, TokenAccount>>,
 
     /// CHECK: secure because we are not reading or mutating data
     #[account(

@@ -1,7 +1,8 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
+import { Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import idl from '../target/idl/solcraft_breeding.json'
-import { getTokenWallet, program, provider } from '../utils'
+import { getMetadata, getTokenWallet, program, provider } from '../utils'
 
 // ADDRESS DO BACKEND: BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr
 
@@ -9,7 +10,7 @@ describe('can stake a NFT', () => {
   it('can stake', async () => {
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      '4EA8Nj9t286iVRrgrxVSD16ZGRBrzz3XNtZrojmYxhAN'
+      'BHtRmRuWNpHMPX1jNwgJtKoooeesPPFGiQ9T9bYAbsU2'
     )
 
     const user = new PublicKey(
@@ -88,10 +89,19 @@ describe('can stake a NFT', () => {
     console.log('token -> ', token.toBase58())
     console.log('\n')
 
+    const metadata = await getMetadata(mint)
+    const metadataAccount = await Metadata.fromAccountAddress(
+      provider.connection,
+      metadata
+    )
+
+    console.log(metadataAccount.data.uri)
+
     const data = {
       timeToEndForaging: 999,
       stakeInterval: 222,
-      amountOfItems: 4
+      amountOfItems: 4,
+      metadata: metadataAccount.data.uri
     }
 
     await program.methods

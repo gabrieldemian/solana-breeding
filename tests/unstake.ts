@@ -62,7 +62,6 @@ describe('can unstake a NFT', () => {
       mint,
       user,
       userToken,
-      // pigMachine,
       stakeToken,
       stakeAccount,
       payer: provider.wallet.publicKey,

@@ -44,6 +44,12 @@ pub struct StakeAccountData {
 
 #[account]
 #[derive(Default)]
+pub struct TestData {
+    pub metadata: String,
+}
+
+#[account]
+#[derive(Default)]
 pub struct StakeAccount {
     pub data: StakeAccountData,
     pub user: Pubkey,

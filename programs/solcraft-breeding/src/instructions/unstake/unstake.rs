@@ -9,8 +9,8 @@ pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
     let stake_account = &mut ctx.accounts.stake_account;
     let payer = &mut ctx.accounts.payer.to_account_info();
     let stake_token = &ctx.accounts.stake_token.to_account_info();
-    let mint_element = &mut ctx.accounts.mint_element.to_account_info();
-    let token_element = &ctx.accounts.token_element.to_account_info();
+    // let mint_element = &mut ctx.accounts.mint_element.to_account_info();
+    // let token_element = &ctx.accounts.token_element.to_account_info();
 
     if now < stake_account.data.time_to_end_foraging {
         return Err(ErrorCode::StakeNotReady.into());
@@ -43,17 +43,17 @@ pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
 
     let stake_account_balance = stake_account.to_account_info().try_lamports()?;
 
-    anchor_spl::token::mint_to(
-        CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
-            anchor_spl::token::MintTo {
-                mint: mint_element.clone(),
-                to: token_element.clone(),
-                authority: payer.to_account_info().clone(),
-            },
-        ),
-        1000000000 * 1,
-    )?;
+    // anchor_spl::token::mint_to(
+    //     CpiContext::new(
+    //         ctx.accounts.token_program.to_account_info(),
+    //         anchor_spl::token::MintTo {
+    //             mint: mint_element.clone(),
+    //             to: token_element.clone(),
+    //             authority: payer.to_account_info().clone(),
+    //         },
+    //     ),
+    //     1000000000 * 1,
+    // )?;
 
     /* closes the stake_token account */
     /* and send the account's SOL to the caller */

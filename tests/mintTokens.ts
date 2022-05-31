@@ -1,10 +1,12 @@
 import { BN } from '@project-serum/anchor'
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { PublicKey } from '@solana/web3.js'
 import {
   createAssociatedTokenAccountInstruction,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token'
-import { PublicKey } from '@solana/web3.js'
-import { getTokenWallet, program, provider } from '../utils'
+  getTokenWallet,
+  program,
+  provider
+} from '../utils'
 import { symbolToRewardDevnet } from '../constants'
 
 describe('starting initialize mint tokens', () => {
@@ -14,7 +16,7 @@ describe('starting initialize mint tokens', () => {
     )
 
     /* mint account of the game itself */
-    const mint = new PublicKey(symbolToRewardDevnet.DRGN)
+    const mint = new PublicKey(symbolToRewardDevnet.SCROP)
 
     /* token account of the user */
     const token = await getTokenWallet(user, mint)
@@ -59,5 +61,10 @@ describe('starting initialize mint tokens', () => {
 
     console.log('mint ->', mint.toBase58())
     console.log('token ->', token.toBase58())
+    console.log('user -> ', user.toBase58())
+    console.log(
+      'provider.wallet.publicKey -> ',
+      provider.wallet.publicKey.toBase58()
+    )
   })
 })

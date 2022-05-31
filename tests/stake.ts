@@ -1,5 +1,10 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
+import {
+  Keypair,
+  PublicKey,
+  SystemProgram,
+  SYSVAR_RENT_PUBKEY
+} from '@solana/web3.js'
 import { Metadata } from '@metaplex-foundation/mpl-token-metadata'
 import idl from '../target/idl/solcraft_breeding.json'
 import { getMetadata, getTokenWallet, program, provider } from '../utils'
@@ -95,7 +100,7 @@ describe('can stake a NFT', () => {
       metadata
     )
 
-    console.log(metadataAccount.data.uri)
+    console.log(metadataAccount.data.uri.replace(/[^\x20-\x7E]/g, ''))
 
     const data = {
       timeToEndForaging: 999,
@@ -104,10 +109,22 @@ describe('can stake a NFT', () => {
       // metadata: metadataAccount.data.uri
     }
 
+    const test = new Keypair()
+
     await program.methods
-      .stake(stakeTokenBump, data)
-      .accounts(accounts)
+      .test(metadataAccount.data.uri.replace(/[^\x20-\x7E]/g, ''))
+      .accounts({
+        backendWallet: provider.wallet.publicKey,
+        systemProgram: SystemProgram.programId,
+        test: test.publicKey
+      })
+      .signers([test])
       .rpc()
+
+    // await program.methods
+    //   .stake(stakeTokenBump, data)
+    //   .accounts(accounts)
+    //   .rpc()
   })
 })
 

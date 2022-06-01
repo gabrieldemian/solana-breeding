@@ -14,11 +14,15 @@ pub fn handler(ctx: Context<Stake>, bump: u8, data: StakeAccountData) -> Result<
     let authority = &ctx.accounts.authority.to_account_info();
     let stake_token = &ctx.accounts.stake_token.to_account_info();
     let backend_wallet = &ctx.accounts.backend_wallet.to_account_info();
+    let mint = &ctx.accounts.mint.to_account_info();
     let stake_account = &mut ctx.accounts.stake_account;
 
-    stake_account.data = data;
     stake_account.user = authority.key.clone();
+    stake_account.data.stake_interval = data.stake_interval;
+    stake_account.data.time_to_end_foraging = data.time_to_end_foraging;
+    stake_account.data.time_foraging_started = now;
     stake_account.token = token.key.clone();
+    stake_account.mint = mint.key.clone();
     stake_account.bump = *ctx.bumps.get("stake_account").unwrap();
 
     let mint_key = ctx.accounts.mint.key();

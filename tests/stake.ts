@@ -1,13 +1,7 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import {
-  Keypair,
-  PublicKey,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY
-} from '@solana/web3.js'
-import { Metadata } from '@metaplex-foundation/mpl-token-metadata'
-import idl from '../target/idl/solcraft_breeding.json'
-import { getMetadata, getTokenWallet, program, provider } from '../utils'
+import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
+import idl from '../target/idl/solcraft_program.json'
+import { getTokenWallet, program, provider } from '../utils'
 
 // ADDRESS DO BACKEND: BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr
 
@@ -24,7 +18,6 @@ describe('can stake a NFT', () => {
 
     /* token account of the user */
     const token = await getTokenWallet(user, mint)
-    console.log('token -> ', token.toBase58())
 
     const [stakeToken, stakeTokenBump] =
       await PublicKey.findProgramAddress(
@@ -40,8 +33,6 @@ describe('can stake a NFT', () => {
 
     const stakeAccountInfo =
       await provider.connection.getParsedAccountInfo(stakeAccount)
-
-    console.log(stakeAccountInfo.value)
 
     if (stakeAccountInfo.value) {
       throw new Error(
@@ -60,7 +51,6 @@ describe('can stake a NFT', () => {
 
     const isDelegated = !!result.value
 
-    console.log(result.value.data.parsed)
     if (!isDelegated) {
       throw new Error(
         'The token owner did not gave anyone the authority to move it'
@@ -94,37 +84,22 @@ describe('can stake a NFT', () => {
     console.log('token -> ', token.toBase58())
     console.log('\n')
 
-    const metadata = await getMetadata(mint)
-    const metadataAccount = await Metadata.fromAccountAddress(
-      provider.connection,
-      metadata
-    )
-
-    console.log(metadataAccount.data.uri.replace(/[^\x20-\x7E]/g, ''))
+    // const metadata = await getMetadata(mint)
+    // const metadataAccount = await Metadata.fromAccountAddress(
+    //   provider.connection,
+    //   metadata
+    // )
+    // console.log(metadataAccount.data.uri.replace(/[^\x20-\x7E]/g, ''))
 
     const data = {
       timeToEndForaging: 999,
-      stakeInterval: 222,
-      amountOfItems: 4
-      // metadata: metadataAccount.data.uri
+      stakeInterval: 222
     }
 
-    const test = new Keypair()
-
     await program.methods
-      .test(metadataAccount.data.uri.replace(/[^\x20-\x7E]/g, ''))
-      .accounts({
-        backendWallet: provider.wallet.publicKey,
-        systemProgram: SystemProgram.programId,
-        test: test.publicKey
-      })
-      .signers([test])
+      .stake(stakeTokenBump, data)
+      .accounts(accounts)
       .rpc()
-
-    // await program.methods
-    //   .stake(stakeTokenBump, data)
-    //   .accounts(accounts)
-    //   .rpc()
   })
 })
 

@@ -1,7 +1,7 @@
 import { PublicKey, SystemProgram } from '@solana/web3.js'
 
 import { PREFIX_PIG } from '../constants'
-import idl from '../target/idl/solcraft_breeding.json'
+import idl from '../target/idl/solcraft_program.json'
 import { program, provider } from '../utils'
 
 describe('starting initialize pig machine', () => {

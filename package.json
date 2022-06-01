@@ -18,6 +18,7 @@
     "test-breed": "anchor run test_breed",
     "test-stake": "anchor run test_stake",
     "test-unstake": "anchor run test_unstake",
+    "test-approve": "anchor run test_approve",
     "log-pig-machine": "anchor run log_pig_machine"
   },
   "devDependencies": {

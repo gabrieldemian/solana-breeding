@@ -39,23 +39,17 @@ pub struct StakeAccountData {
     /// timestamp in seconds
     pub time_to_end_foraging: u32,
     pub stake_interval: u32,
-    pub amount_of_items: u8,
-}
-
-#[account]
-#[derive(Default)]
-pub struct TestData {
-    pub metadata: String,
+    pub time_foraging_started: u32,
 }
 
 #[account]
 #[derive(Default)]
 pub struct StakeAccount {
-    pub data: StakeAccountData,
     pub user: Pubkey,
+    pub data: StakeAccountData,
     pub token: Pubkey,
+    pub mint: Pubkey,
     pub bump: u8,
-    // pub metadata: String,
 }
 
 /* seeds of the PDA, can be anything you want */

@@ -6,29 +6,12 @@ pub mod state;
 pub mod utils;
 use crate::state::{PigMachineData, StakeAccountData};
 
-declare_id!("4fM7kubepyzaNe5JypWehLy5YTk5gHNSvymTDbbpnoRg");
+declare_id!("DAh62M8d6isecwFT4CMsvkJcNJ2FHX9ThkjX847h3rBH");
 
 #[program]
-pub mod solcraft_breeding {
-
-    use crate::state::TestData;
+pub mod solcraft_program {
 
     use super::*;
-
-    #[derive(Accounts)]
-    #[instruction(bump: u8, data: StakeAccountData)]
-    pub struct Test<'info> {
-        #[account(
-        init,
-        payer = backend_wallet,
-        space = 8 + 74,
-    )]
-        pub test: Account<'info, TestData>,
-
-        #[account(mut)]
-        pub backend_wallet: Signer<'info>,
-        pub system_program: Program<'info, System>,
-    }
 
     pub fn breed(ctx: Context<Breed>) -> Result<()> {
         instructions::breed::handler(ctx)
@@ -50,13 +33,8 @@ pub mod solcraft_breeding {
         instructions::mint_tokens::handler(ctx, quantity)
     }
 
-    pub fn test(ctx: Context<Test>, metadata: String) -> Result<()> {
-        ctx.accounts.test.metadata = metadata;
-        msg!(
-            "string is serializing without error or ascii characters!!! {}",
-            ctx.accounts.test.metadata
-        );
-        Ok(())
+    pub fn approve(ctx: Context<Approve>) -> Result<()> {
+        instructions::approve::handler(ctx)
     }
 
     pub fn initialize_pig_machine(

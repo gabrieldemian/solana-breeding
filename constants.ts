@@ -1,4 +1,5 @@
 import { PublicKey } from '@solana/web3.js'
+import idl from './target/idl/solcraft_program.json'
 
 export const SPL_ASSOCIATED_TOKEN_ACCOUNT_PROGRAM_ID = new PublicKey(
   'ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL'
@@ -19,9 +20,7 @@ export const pigMachine = new PublicKey(
   '4Pn68E6SUA3dXRkwwLikzDhgXrXKE2QCTFp8uou5Aot2'
 )
 
-export const programId = new PublicKey(
-  '4fM7kubepyzaNe5JypWehLy5YTk5gHNSvymTDbbpnoRg'
-)
+export const programId = new PublicKey(idl.metadata.address)
 
 /* MAINNET */
 export const symbolToRewardMintMainnet = {

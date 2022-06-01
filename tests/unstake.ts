@@ -1,7 +1,7 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
 import { symbolToRewardDevnet } from '../constants'
-import idl from '../target/idl/solcraft_breeding.json'
+import idl from '../target/idl/solcraft_program.json'
 import {
   createAssociatedTokenAccountInstruction,
   getTokenWallet,

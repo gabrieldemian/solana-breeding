@@ -16,5 +16,5 @@ no-entrypoint = []
 [dependencies]
 spl-token = { version = "3.1.1", features = [ "no-entrypoint" ] }
 metaplex-token-metadata = { version = "0.0.1", features = [ "no-entrypoint" ] }
-anchor-lang = { version = "0.24.2" }
+anchor-lang = { version = "0.24.2", features = ["init-if-needed"] }
 anchor-spl = "0.24.2"

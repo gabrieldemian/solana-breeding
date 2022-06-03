@@ -13,7 +13,7 @@ describe('can unstake a NFT', () => {
   it('can unstake', async () => {
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      'BHtRmRuWNpHMPX1jNwgJtKoooeesPPFGiQ9T9bYAbsU2'
+      'A8MofnmLuEZvnyfyXmssLsRqmLcN96j7h5G42AuDLJHf'
     )
 
     const user = new PublicKey(
@@ -44,6 +44,12 @@ describe('can unstake a NFT', () => {
       new PublicKey(idl.metadata.address)
     )
 
+    /* generating a PDA for the stake interval account */
+    const [stakeIntervalAccount] = await PublicKey.findProgramAddress(
+      [Buffer.from('stake_interval_account'), mint.toBuffer()],
+      new PublicKey(idl.metadata.address)
+    )
+
     const stakeTokenInfo = await provider.connection.getParsedAccountInfo(
       stakeToken
     )
@@ -64,6 +70,7 @@ describe('can unstake a NFT', () => {
       userToken,
       stakeToken,
       stakeAccount,
+      stakeIntervalAccount,
       payer: provider.wallet.publicKey,
       tokenProgram: TOKEN_PROGRAM_ID
     }
@@ -105,6 +112,10 @@ describe('can unstake a NFT', () => {
     console.log('mint ->', mint.toBase58())
     console.log('stakeToken -> ', stakeToken.toBase58())
     console.log('stakeAccount -> ', stakeAccount.toBase58())
+    console.log(
+      'stakeIntervalAccount -> ',
+      stakeIntervalAccount.toBase58()
+    )
     console.log('userToken -> ', userToken.toBase58())
     console.log('mintElement -> ', mintElement.toBase58())
     console.log('tokenElement -> ', tokenElement.toBase58())

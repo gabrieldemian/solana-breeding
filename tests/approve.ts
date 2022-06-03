@@ -6,7 +6,7 @@ describe('initializing approve test', () => {
   it('can approve and pay fees', async () => {
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      'BHtRmRuWNpHMPX1jNwgJtKoooeesPPFGiQ9T9bYAbsU2'
+      'A8MofnmLuEZvnyfyXmssLsRqmLcN96j7h5G42AuDLJHf'
     )
 
     /* change the wallet of Anchor.toml to update this wallet */

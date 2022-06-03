@@ -1,4 +1,7 @@
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import {
+  createAssociatedTokenAccountInstruction,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
 import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
 import idl from '../target/idl/solcraft_program.json'
 import { getTokenWallet, program, provider } from '../utils'
@@ -9,25 +12,36 @@ describe('can stake a NFT', () => {
   it('can stake', async () => {
     /* mint address of the NFT to be staked */
     const mint = new PublicKey(
-      'BHtRmRuWNpHMPX1jNwgJtKoooeesPPFGiQ9T9bYAbsU2'
+      'A8MofnmLuEZvnyfyXmssLsRqmLcN96j7h5G42AuDLJHf'
     )
 
     const user = new PublicKey(
       'HL6iD5WZtn1m4Vzz3dwnkD553LVp9T9bLXZSarcLmhLn'
     )
 
+    const backend_wallet = new PublicKey(
+      'BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr'
+    )
+
     /* token account of the user */
     const token = await getTokenWallet(user, mint)
 
-    const [stakeToken, stakeTokenBump] =
-      await PublicKey.findProgramAddress(
-        [Buffer.from('stake_token'), mint.toBuffer()],
-        new PublicKey(idl.metadata.address)
-      )
+    /* we will transfer the user NFT to this token account */
+    /* which is owned by the program */
+    const [stakeToken] = await PublicKey.findProgramAddress(
+      [Buffer.from('stake_token'), mint.toBuffer()],
+      new PublicKey(idl.metadata.address)
+    )
 
     /* generating a PDA for the stake account */
     const [stakeAccount] = await PublicKey.findProgramAddress(
       [Buffer.from('stake_account'), mint.toBuffer()],
+      new PublicKey(idl.metadata.address)
+    )
+
+    /* generating a PDA for the stake interval account */
+    const [stakeIntervalAccount] = await PublicKey.findProgramAddress(
+      [Buffer.from('stake_interval_account'), mint.toBuffer()],
       new PublicKey(idl.metadata.address)
     )
 
@@ -59,26 +73,36 @@ describe('can stake a NFT', () => {
     if (
       isDelegated &&
       result.value.data.parsed.info.delegate !==
-        provider.wallet.publicKey.toBase58()
+        'BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr'
     )
       throw new Error(
         `The token owner gave someone the approval to move this token,
         but it was not to our backend wallet`
       )
 
+    const stakeTokenInfo = await provider.connection.getParsedAccountInfo(
+      stakeToken
+    )
+
+    const stakeTokenExist = !!stakeTokenInfo.value
+
     const accounts = {
       mint,
       token,
       stakeToken,
       stakeAccount,
+      stakeIntervalAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
       authority: user,
       rent: SYSVAR_RENT_PUBKEY,
       backendWallet: provider.wallet.publicKey
     }
 
-    console.log('stakeTokenBump bump ->', stakeTokenBump)
     console.log('mint -> ', mint.toBase58())
+    console.log(
+      'stakeIntervalAccount -> ',
+      stakeIntervalAccount.toBase58()
+    )
     console.log('stakeAccount -> ', stakeAccount.toBase58())
     console.log('stakeToken token -> ', stakeToken.toBase58())
     console.log('token -> ', token.toBase58())
@@ -93,13 +117,32 @@ describe('can stake a NFT', () => {
 
     const data = {
       timeToEndForaging: 999,
-      stakeInterval: 222
+      timeForagingStarted: 999 // this will be replaced on the contract
     }
 
-    await program.methods
-      .stake(stakeTokenBump, data)
-      .accounts(accounts)
-      .rpc()
+    const stakeInterval = 999
+
+    let tx = program.methods.stake(data, stakeInterval).accounts(accounts)
+
+    const preInstructions = []
+
+    if (!stakeTokenExist) {
+      console.log('!stakeTokenExist')
+      preInstructions.push(
+        createAssociatedTokenAccountInstruction(
+          provider.wallet.publicKey, // payer
+          stakeToken, // new associated account
+          backend_wallet, // owner / wallet address (to)
+          mint // mint address
+        )
+      )
+    }
+
+    if (preInstructions.length > 0) {
+      tx = tx.preInstructions(preInstructions)
+    }
+
+    await tx.rpc()
   })
 })
 

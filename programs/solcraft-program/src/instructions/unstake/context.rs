@@ -1,5 +1,5 @@
 use crate::error::ErrorCode;
-use crate::state::{PigMachine, StakeAccount, PREFIX_PIG};
+use crate::state::{StakeAccount, StakeAccountInterval};
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 
@@ -18,16 +18,20 @@ pub struct Unstake<'info> {
         seeds=[b"stake_account", mint.key().as_ref()],
         bump,
         constraint = stake_account.to_account_info().owner == program_id,
+        // close account at th end of the ix and send SOL to the backend wallet
+        close = payer
     )]
     pub stake_account: Account<'info, StakeAccount>,
 
-    // #[account(
-    //     mut,
-    //     seeds = [PREFIX_PIG.as_bytes()],
-    //     bump = pig_machine.bump,
-    //     constraint = pig_machine.to_account_info().owner == program_id
-    // )]
-    // pub pig_machine: Account<'info, PigMachine>,
+    #[account(
+        mut,
+        seeds=[b"stake_interval_account", mint.key().as_ref()],
+        bump,
+        constraint = stake_interval_account.to_account_info().owner == program_id,
+        // close account at th end of the ix and send SOL to the backend wallet
+        close = payer
+    )]
+    pub stake_interval_account: Account<'info, StakeAccountInterval>,
 
     /// CHECK: This is not dangerous because we don't read or write from this account
     pub mint: Account<'info, Mint>,
@@ -58,7 +62,6 @@ pub struct Unstake<'info> {
         bump,
         token::mint = mint,
         token::authority = stake_token,
-        // close = payer
     )]
     pub stake_token: Account<'info, TokenAccount>,
 

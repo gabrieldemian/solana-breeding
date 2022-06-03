@@ -1,15 +1,12 @@
 import { PublicKey } from '@solana/web3.js'
-import { program, provider } from '../utils'
+import { program } from '../utils'
+import idl from '../target/idl/solcraft_program.json'
 
 describe('-- starting getRarities --', () => {
   it('can get the rarities', async () => {
-    // const data = await provider.connection.getParsedTokenAccountsByOwner(
-    //   // provider.wallet.publicKey,
-    //   new PublicKey('CrjhY2672FWvKodjKNmi34VwkLcgEA8VqdEatLCY9U58'),
-    //   {
-    //     mint: new PublicKey('9fEzXLrAxukNHvgfHbV795MACfGWHBnpyv3FiLefsVmT')
-    //   }
-    // )
+    const mint = new PublicKey(
+      'A8MofnmLuEZvnyfyXmssLsRqmLcN96j7h5G42AuDLJHf'
+    )
 
     const allUserStakes = await program.account.stakeAccount.all([
       {
@@ -20,15 +17,18 @@ describe('-- starting getRarities --', () => {
       }
     ])
 
-    // const publicKeys = allUserStakes.map((stake) =>
-    //   stake.account.token.toBase58()
-    // )
+    const [stakeAccountInterval] = await PublicKey.findProgramAddress(
+      [Buffer.from('stake_interval_account'), mint.toBuffer()],
+      new PublicKey(idl.metadata.address)
+    )
 
-    // fetch('api-devnet.magiceden.dev/v2/tokens/')
+    const stakeAccountIntervalInfo =
+      await program.account.stakeAccountInterval.fetch(
+        stakeAccountInterval
+      )
 
-    // console.log(publicKeys)
+    console.log('stake account interval: ', stakeAccountIntervalInfo)
 
-    // console.log(data.value[0].account.data)
-    console.log(allUserStakes)
+    console.log(allUserStakes[0].account)
   })
 })

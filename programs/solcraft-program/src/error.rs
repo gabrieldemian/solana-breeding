@@ -16,4 +16,7 @@ pub enum ErrorCode {
 
     #[msg("You passed a mint which the authority is not the wallet of the backend")]
     MintWrongAuthority,
+
+    #[msg("The stake interval is not over yet")]
+    IntervalNotOver,
 }

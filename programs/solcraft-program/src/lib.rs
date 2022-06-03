@@ -17,8 +17,8 @@ pub mod solcraft_program {
         instructions::breed::handler(ctx)
     }
 
-    pub fn stake(ctx: Context<Stake>, bump: u8, data: StakeAccountData) -> Result<()> {
-        instructions::stake::handler(ctx, bump, data)
+    pub fn stake(ctx: Context<Stake>, data: StakeAccountData, stake_interval: u32) -> Result<()> {
+        instructions::stake::handler(ctx, data, stake_interval)
     }
 
     pub fn unstake(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {

@@ -1,20 +1,30 @@
 use crate::error::ErrorCode;
-use crate::state::{StakeAccount, StakeAccountData};
+use crate::state::{StakeAccount, StakeAccountData, StakeAccountInterval};
 use anchor_lang::prelude::*;
 use anchor_spl::token::{Mint, Token, TokenAccount};
 
 #[derive(Accounts)]
-#[instruction(bump: u8, data: StakeAccountData)]
+#[instruction(data: StakeAccountData, stake_interval: u32)]
 pub struct Stake<'info> {
     #[account(
         init,
         payer = backend_wallet,
         seeds=[b"stake_account", mint.key().as_ref()],
         bump,
-        space = 8 + 32 + 4 + 4 + 4 + 32 + 32 + 1,
+        space = 8 + 32 + 4 + 4 + 32 + 32 + 1,
         constraint = stake_account.to_account_info().owner == program_id
     )]
     pub stake_account: Account<'info, StakeAccount>,
+
+    #[account(
+        init,
+        space = 8 + 4,
+        payer = backend_wallet,
+        seeds=[b"stake_interval_account", mint.key().as_ref()],
+        bump,
+        constraint = stake_interval_account.to_account_info().owner == program_id
+    )]
+    pub stake_interval_account: Account<'info, StakeAccountInterval>,
 
     /// CHECK: secure because we don't read or write from this account
     pub mint: Account<'info, Mint>,

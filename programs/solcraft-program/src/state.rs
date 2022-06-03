@@ -36,10 +36,14 @@ pub struct PigMachineData {
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, Default, PartialEq)]
 pub struct StakeAccountData {
-    /// timestamp in seconds
     pub time_to_end_foraging: u32,
-    pub stake_interval: u32,
     pub time_foraging_started: u32,
+}
+
+#[account]
+#[derive(Default)]
+pub struct StakeAccountInterval {
+    pub stake_interval: u32,
 }
 
 #[account]

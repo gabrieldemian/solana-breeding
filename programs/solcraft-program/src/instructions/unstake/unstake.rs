@@ -1,7 +1,6 @@
-use anchor_lang::prelude::*;
-
 use super::Unstake;
 use crate::error::ErrorCode;
+use anchor_lang::prelude::*;
 
 pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
     let now = Clock::get().unwrap().unix_timestamp as u32;
@@ -13,11 +12,6 @@ pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
     if now < stake_account.data.time_to_end_foraging {
         return Err(ErrorCode::StakeNotReady.into());
     }
-
-    msg!(
-        "stake will end in: {}",
-        stake_account.data.time_to_end_foraging
-    );
 
     let mint_key = ctx.accounts.mint.key();
 
@@ -37,10 +31,6 @@ pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
         1,
     )?;
 
-    ctx.accounts.stake_token.reload()?;
-
-    let stake_account_balance = stake_account.to_account_info().try_lamports()?;
-
     /* closes the stake_token account */
     /* and send the account's SOL to the caller */
     anchor_spl::token::close_account(CpiContext::new_with_signer(
@@ -52,14 +42,6 @@ pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
         },
         &[&signers_seeds],
     ))?;
-
-    /* send the SOL to the payer and erase the data of stake_account */
-    **stake_account.to_account_info().try_borrow_mut_lamports()? -= stake_account_balance;
-    **payer.to_account_info().try_borrow_mut_lamports()? += stake_account_balance;
-    stake_account
-        .to_account_info()
-        .try_borrow_mut_data()?
-        .fill(0);
 
     Ok(())
 }

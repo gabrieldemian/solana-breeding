@@ -4,6 +4,10 @@ import { PREFIX_PIG } from '../constants'
 import idl from '../target/idl/solcraft_program.json'
 import { program, provider } from '../utils'
 
+/**
+  This is not being used
+*/
+
 describe('starting initialize pig machine', () => {
   it('can initialize pig machine', async () => {
     /* generating a PDA */

@@ -7,6 +7,10 @@ import {
 import idl from '../target/idl/solcraft_program.json'
 import { getTokenWallet, program, provider } from '../utils'
 
+/**
+  This is supposed to be called on the backend. This is a transaction that
+  runs after the user staked (transferred) his NFT to the backend wallet
+*/
 describe('this will on the backend after the stake transaction', () => {
   it('can do after stake transaction', async () => {
     /* mint address of the NFT to be staked */

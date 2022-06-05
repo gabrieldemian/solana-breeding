@@ -12,6 +12,10 @@ import { ASSOCIATED_PROGRAM_ID } from '@project-serum/anchor/dist/cjs/utils/toke
 import { program, provider } from '../utils'
 import { symbols } from '../constants'
 
+/**
+  Create new fungible tokens
+*/
+
 describe('starting initialize init runes', () => {
   it('can initialize init runes', async () => {
     for (const symbol of symbols) {

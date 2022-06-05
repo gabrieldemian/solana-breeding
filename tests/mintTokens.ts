@@ -9,6 +9,10 @@ import {
 } from '../utils'
 import { symbolToRewardDevnet } from '../constants'
 
+/**
+  Mint new fungible tokens
+*/
+
 describe('starting initialize mint tokens', () => {
   it('can mint tokens', async () => {
     const user = new PublicKey(

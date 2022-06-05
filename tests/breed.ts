@@ -1,19 +1,22 @@
-import { MintLayout, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { MintLayout, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
   Keypair,
-  PublicKey,
   SystemProgram,
   SYSVAR_RENT_PUBKEY
 } from '@solana/web3.js'
 import {
-  createAssociatedTokenAccountInstruction,
+  // createAssociatedTokenAccountInstruction,
   DEVNET_WALLET,
   getMetadata,
-  getTokenWallet,
+  // getTokenWallet,
   program,
   provider
 } from '../utils'
 import { pigMachine, TOKEN_METADATA_PROGRAM_ID } from '../constants'
+
+/**
+  Not being used right now
+*/
 
 describe('will breed 2 pigs', () => {
   it('can breed', async () => {
@@ -31,10 +34,10 @@ describe('will breed 2 pigs', () => {
     // )
 
     const newMint = Keypair.generate()
-    const newToken = await getTokenWallet(
-      DEVNET_WALLET.publicKey,
-      newMint.publicKey
-    )
+    // const newToken = await getTokenWallet(
+    //   DEVNET_WALLET.publicKey,
+    //   newMint.publicKey
+    // )
 
     const newMetadata = await getMetadata(newMint.publicKey)
 
@@ -64,28 +67,28 @@ describe('will breed 2 pigs', () => {
           space: MintLayout.span,
           lamports: rent,
           programId: TOKEN_PROGRAM_ID
-        }),
-        Token.createInitMintInstruction(
-          TOKEN_PROGRAM_ID,
-          newMint.publicKey,
-          0, // decimals
-          DEVNET_WALLET.publicKey, // mint authority
-          DEVNET_WALLET.publicKey // freeze authority
-        ),
-        createAssociatedTokenAccountInstruction(
-          newToken, // associated account
-          DEVNET_WALLET.publicKey, // payer
-          DEVNET_WALLET.publicKey, // wallet address (to)
-          newMint.publicKey // mint address
-        ),
-        Token.createMintToInstruction(
-          TOKEN_PROGRAM_ID,
-          newMint.publicKey, // from
-          newToken, // account that will receive the metadata
-          DEVNET_WALLET.publicKey, // authority
-          [],
-          1 // amount
-        )
+        })
+        // Token.createInitMintInstruction(
+        //   TOKEN_PROGRAM_ID,
+        //   newMint.publicKey,
+        //   0, // decimals
+        //   DEVNET_WALLET.publicKey, // mint authority
+        //   DEVNET_WALLET.publicKey // freeze authority
+        // ),
+        // createAssociatedTokenAccountInstruction(
+        //   newToken, // associated account
+        //   DEVNET_WALLET.publicKey, // payer
+        //   DEVNET_WALLET.publicKey, // wallet address (to)
+        //   newMint.publicKey // mint address
+        // ),
+        // Token.createMintToInstruction(
+        //   TOKEN_PROGRAM_ID,
+        //   newMint.publicKey, // from
+        //   newToken, // account that will receive the metadata
+        //   DEVNET_WALLET.publicKey, // authority
+        //   [],
+        //   1 // amount
+        // )
       ])
       .rpc()
 

@@ -1,11 +1,16 @@
 import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import {
-  PublicKey,
-  SystemProgram,
-  SYSVAR_RENT_PUBKEY
-} from '@solana/web3.js'
+import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
 import idl from '../target/idl/solcraft_program.json'
 import { getTokenWallet, program, provider } from '../utils'
+
+/**
+  This is supposed to be called on the frontend, the user sends his NFT
+  to the contract token account
+
+  And after that, the frontend calls an endpoint on the backend
+  and this endpoint calls the 'afterStake' transaction to initialize
+  some necessary accounts of the stake
+*/
 
 describe('can stake a NFT', () => {
   it('can stake', async () => {

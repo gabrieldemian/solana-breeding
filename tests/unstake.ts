@@ -1,13 +1,17 @@
-import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import {
+  createAssociatedTokenAccountInstruction,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
 import { PublicKey } from '@solana/web3.js'
 import { symbolToRewardDevnet } from '../constants'
 import idl from '../target/idl/solcraft_program.json'
-import {
-  createAssociatedTokenAccountInstruction,
-  getTokenWallet,
-  program,
-  provider
-} from '../utils'
+import { getTokenWallet, program, provider } from '../utils'
+
+/**
+  This is supposed to be called on the backend. The backend calculates the rewards,
+  do some validations, if everything is ok it returns the user NFT
+  and mint him tokens, or not
+*/
 
 describe('can unstake a NFT', () => {
   it('can unstake', async () => {
@@ -83,8 +87,8 @@ describe('can unstake a NFT', () => {
       console.log('!tokenElementHasToken')
       preInstructions.push(
         createAssociatedTokenAccountInstruction(
-          tokenElement, // new associated account
           provider.wallet.publicKey, // payer
+          tokenElement, // new associated account
           user, // wallet address (to)
           mintElement // mint address
         )
@@ -97,8 +101,8 @@ describe('can unstake a NFT', () => {
       console.log('!isStakeTokenCreated')
       preInstructions.push(
         createAssociatedTokenAccountInstruction(
-          stakeToken, // new associated account
           provider.wallet.publicKey, // payer
+          stakeToken, // new associated account
           provider.wallet.publicKey, // wallet address (to)
           mint // mint address
         )

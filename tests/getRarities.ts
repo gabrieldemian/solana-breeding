@@ -2,6 +2,10 @@ import { PublicKey } from '@solana/web3.js'
 import { program } from '../utils'
 import idl from '../target/idl/solcraft_program.json'
 
+/**
+  This is just a playground for me to quickly test some ideas
+*/
+
 describe('-- starting getRarities --', () => {
   it('can get the rarities', async () => {
     const mint = new PublicKey(

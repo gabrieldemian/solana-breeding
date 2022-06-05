@@ -9,7 +9,7 @@
     "text-encoding": "^0.7.0"
   },
   "scripts": {
-    "sanity-test": "cargo test-bpf --manifest-path=./programs/minimal_mint/Cargo.toml",
+    "sanity-test": "cargo test-bpf --manifest-path=./programs/solcraft-program/Cargo.toml",
     "lint": "npx eslint --ext .js,.ts ./ --fix",
     "build-types": "tsc --noEmit --pretty",
     "test-pig-machine": "anchor run test_init_pig_machine",
@@ -17,9 +17,8 @@
     "test-mint-tokens": "anchor run test_mint_tokens",
     "test-breed": "anchor run test_breed",
     "test-stake": "anchor run test_stake",
-    "test-unstake": "anchor run test_unstake",
-    "test-approve": "anchor run test_approve",
-    "log-pig-machine": "anchor run log_pig_machine"
+    "test-after-stake": "anchor run test_after_stake",
+    "test-unstake": "anchor run test_unstake"
   },
   "devDependencies": {
     "@types/chai": "^4.2.22",

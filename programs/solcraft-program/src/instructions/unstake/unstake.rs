@@ -6,7 +6,7 @@ pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
     let now = Clock::get().unwrap().unix_timestamp as u32;
     let user_token = &ctx.accounts.user_token.to_account_info();
     let stake_account = &mut ctx.accounts.stake_account;
-    let payer = &mut ctx.accounts.payer.to_account_info();
+    let backend_wallet = &mut ctx.accounts.backend_wallet.to_account_info();
     let stake_token = &ctx.accounts.stake_token.to_account_info();
 
     if now < stake_account.data.time_to_end_foraging {
@@ -37,7 +37,7 @@ pub fn handler(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
         ctx.accounts.token_program.to_account_info(),
         anchor_spl::token::CloseAccount {
             account: stake_token.to_account_info(),
-            destination: payer.clone(),
+            destination: backend_wallet.clone(),
             authority: stake_token.to_account_info(),
         },
         &[&signers_seeds],

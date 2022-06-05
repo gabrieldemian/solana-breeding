@@ -17,8 +17,16 @@ pub mod solcraft_program {
         instructions::breed::handler(ctx)
     }
 
-    pub fn stake(ctx: Context<Stake>, data: StakeAccountData, stake_interval: u32) -> Result<()> {
-        instructions::stake::handler(ctx, data, stake_interval)
+    pub fn stake(ctx: Context<Stake>) -> Result<()> {
+        instructions::stake::handler(ctx)
+    }
+
+    pub fn after_stake(
+        ctx: Context<AfterStake>,
+        data: StakeAccountData,
+        stake_interval: u32,
+    ) -> Result<()> {
+        instructions::after_stake::handler(ctx, data, stake_interval)
     }
 
     pub fn unstake(ctx: Context<Unstake>, stake_token_bump: u8) -> Result<()> {
@@ -31,10 +39,6 @@ pub mod solcraft_program {
 
     pub fn mint_tokens(ctx: Context<MintTokens>, quantity: u64) -> Result<()> {
         instructions::mint_tokens::handler(ctx, quantity)
-    }
-
-    pub fn approve(ctx: Context<Approve>) -> Result<()> {
-        instructions::approve::handler(ctx)
     }
 
     pub fn initialize_pig_machine(

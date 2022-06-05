@@ -71,7 +71,7 @@ describe('can unstake a NFT', () => {
       stakeToken,
       stakeAccount,
       stakeIntervalAccount,
-      payer: provider.wallet.publicKey,
+      backendWallet: provider.wallet.publicKey,
       tokenProgram: TOKEN_PROGRAM_ID
     }
 
@@ -129,6 +129,8 @@ describe('can unstake a NFT', () => {
     // )
     // console.log('stake data:', stakeAccountData)
 
-    await tx.rpc()
+    const signature = await tx.rpc()
+
+    console.log('signature: ', signature)
   })
 })

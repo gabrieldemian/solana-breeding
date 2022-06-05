@@ -1,12 +1,11 @@
+import { TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
-  createAssociatedTokenAccountInstruction,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token'
-import { PublicKey, SYSVAR_RENT_PUBKEY } from '@solana/web3.js'
+  PublicKey,
+  SystemProgram,
+  SYSVAR_RENT_PUBKEY
+} from '@solana/web3.js'
 import idl from '../target/idl/solcraft_program.json'
 import { getTokenWallet, program, provider } from '../utils'
-
-// ADDRESS DO BACKEND: BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr
 
 describe('can stake a NFT', () => {
   it('can stake', async () => {
@@ -15,11 +14,9 @@ describe('can stake a NFT', () => {
       'A8MofnmLuEZvnyfyXmssLsRqmLcN96j7h5G42AuDLJHf'
     )
 
-    const user = new PublicKey(
-      'HL6iD5WZtn1m4Vzz3dwnkD553LVp9T9bLXZSarcLmhLn'
-    )
+    const user = provider.wallet.publicKey
 
-    const backend_wallet = new PublicKey(
+    const backendWallet = new PublicKey(
       'BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr'
     )
 
@@ -33,78 +30,18 @@ describe('can stake a NFT', () => {
       new PublicKey(idl.metadata.address)
     )
 
-    /* generating a PDA for the stake account */
-    const [stakeAccount] = await PublicKey.findProgramAddress(
-      [Buffer.from('stake_account'), mint.toBuffer()],
-      new PublicKey(idl.metadata.address)
-    )
-
-    /* generating a PDA for the stake interval account */
-    const [stakeIntervalAccount] = await PublicKey.findProgramAddress(
-      [Buffer.from('stake_interval_account'), mint.toBuffer()],
-      new PublicKey(idl.metadata.address)
-    )
-
-    const stakeAccountInfo =
-      await provider.connection.getParsedAccountInfo(stakeAccount)
-
-    if (stakeAccountInfo.value) {
-      throw new Error(
-        `The stake_account should be erased before calling stake again.
-        Did you forgot to delete it?
-        `
-      )
-    }
-
-    const result: any = await provider.connection.getParsedAccountInfo(
-      token
-    )
-
-    /* aqui eu descubro se o usuario fez uma transacao de 'approve' */
-    /* para aprovar a nossa wallet a mover o token do dono, sem a assinatura dele */
-
-    const isDelegated = !!result.value
-
-    if (!isDelegated) {
-      throw new Error(
-        'The token owner did not gave anyone the authority to move it'
-      )
-    }
-    if (
-      isDelegated &&
-      result.value.data.parsed.info.delegate !==
-        'BcZMhAvQCz1XXErtW748YNebBsTmyRfytikr6EAS3fRr'
-    )
-      throw new Error(
-        `The token owner gave someone the approval to move this token,
-        but it was not to our backend wallet`
-      )
-
-    const stakeTokenInfo = await provider.connection.getParsedAccountInfo(
-      stakeToken
-    )
-
-    const stakeTokenExist = !!stakeTokenInfo.value
-
     const accounts = {
+      user,
+      backendWallet,
       mint,
       token,
       stakeToken,
-      stakeAccount,
-      stakeIntervalAccount,
       tokenProgram: TOKEN_PROGRAM_ID,
-      authority: user,
-      rent: SYSVAR_RENT_PUBKEY,
-      backendWallet: provider.wallet.publicKey
+      rent: SYSVAR_RENT_PUBKEY
     }
 
     console.log('mint -> ', mint.toBase58())
-    console.log(
-      'stakeIntervalAccount -> ',
-      stakeIntervalAccount.toBase58()
-    )
-    console.log('stakeAccount -> ', stakeAccount.toBase58())
-    console.log('stakeToken token -> ', stakeToken.toBase58())
+    console.log('stakeToken -> ', stakeToken.toBase58())
     console.log('token -> ', token.toBase58())
     console.log('\n')
 
@@ -115,34 +52,12 @@ describe('can stake a NFT', () => {
     // )
     // console.log(metadataAccount.data.uri.replace(/[^\x20-\x7E]/g, ''))
 
-    const data = {
-      timeToEndForaging: 999,
-      timeForagingStarted: 999 // this will be replaced on the contract
-    }
+    const signature = await program.methods
+      .stake()
+      .accounts(accounts)
+      .rpc()
 
-    const stakeInterval = 999
-
-    let tx = program.methods.stake(data, stakeInterval).accounts(accounts)
-
-    const preInstructions = []
-
-    if (!stakeTokenExist) {
-      console.log('!stakeTokenExist')
-      preInstructions.push(
-        createAssociatedTokenAccountInstruction(
-          provider.wallet.publicKey, // payer
-          stakeToken, // new associated account
-          backend_wallet, // owner / wallet address (to)
-          mint // mint address
-        )
-      )
-    }
-
-    if (preInstructions.length > 0) {
-      tx = tx.preInstructions(preInstructions)
-    }
-
-    await tx.rpc()
+    console.log('signature: ', signature)
   })
 })
 

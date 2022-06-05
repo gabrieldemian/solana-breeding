@@ -27,8 +27,20 @@ describe('-- starting getRarities --', () => {
         stakeAccountInterval
       )
 
-    console.log('stake account interval: ', stakeAccountIntervalInfo)
+    console.log('\n-- stake account interval: ', stakeAccountIntervalInfo)
 
-    console.log(allUserStakes[0].account)
+    // console.log(allUserStakes[0].account.mint.toBase58())
+    const myStake = allUserStakes.filter(
+      (stake) => stake.account.mint.toBase58() === mint.toBase58()
+    )
+    if (myStake.length) {
+      console.log('-- user', myStake[0].account.user.toBase58())
+      console.log('-- mint', myStake[0].account.mint.toBase58())
+      console.log('-- data', myStake[0].account.data)
+    } else {
+      console.log(
+        '\n !!! no stake account was found for this mint address !!! \n'
+      )
+    }
   })
 })
